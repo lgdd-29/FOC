@@ -18,7 +18,7 @@ struct LED
 };
 
 // 构造函数 - 用于创建和初始化LED对象
-LED* LED_Create(GPIO_TypeDef* port, uint16_t pin);
+LED* LED_Create(GPIO_TypeDef* GPIOx, uint16_t pin);
 
 #endif // LED_H
 

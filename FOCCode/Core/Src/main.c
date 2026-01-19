@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "led.h"
+#include "stm32f407xx.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +68,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -76,7 +77,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  LED* led1=LED_Create(GPIOA, GPIO_PIN_5);
   
   /* USER CODE END Init */
 
@@ -99,7 +100,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    led1->toggle(led1);
+    HAL_Delay(500); 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

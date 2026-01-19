@@ -40,7 +40,7 @@ static void led_toggle( LED* self)
 }
 
 // 构造函数：创建并初始化一个LED对象
-LED* LED_Create(GPIO_TypeDef* port, uint16_t pin) 
+LED* LED_Create(GPIO_TypeDef* GPIOx, uint16_t pin) 
 {
     LED* new_led = (LED*)malloc(sizeof(LED));
     if (new_led == NULL) {
@@ -48,7 +48,7 @@ LED* LED_Create(GPIO_TypeDef* port, uint16_t pin)
     }
     
     // 初始化成员变量
-    new_led->port = port;
+    new_led->port = GPIOx;
     new_led->pin = pin;
     
     // 将函数指针绑定到具体实现
