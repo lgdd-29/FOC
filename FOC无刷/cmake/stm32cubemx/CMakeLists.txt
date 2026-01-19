@@ -15,7 +15,8 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Device/ST/STM32F4xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Include
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Inc/foc.h
+)  
 
 # STM32CubeMX generated application sources
 set(MX_Application_Src
@@ -25,6 +26,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/sysmem.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/syscalls.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32f407xx.s
+    ${CMAKE_CURRENT_SOURCE_DIR}/Src/foc.h
 )
 
 # STM32 HAL/LL Drivers
