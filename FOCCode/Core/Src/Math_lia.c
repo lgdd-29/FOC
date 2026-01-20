@@ -8,6 +8,13 @@ void Clarke_Transform(Three_Phase_t *in, Two_Phase_t *out)
     out->y=(in->a+2.0f*in->b)/sqrt(3.0f);
 }
 
+void InvClarke_Transform(Two_Phase_t* in, Three_Phase_t* out)
+{
+    out->a = in->x;
+    out->b = (-in->x + sqrt(3.0f) * in->y) / 2.0f;
+    out->c = (-in->x - sqrt(3.0f) * in->y) / 2.0f;
+}
+
 void Park_Transform(Two_Phase_t *in, Two_Phase_t *out, foc_float_t angle_rad)
 {
     foc_float_t sin_angle = sinf(angle_rad);
