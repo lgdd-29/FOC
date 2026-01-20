@@ -1,6 +1,11 @@
 #ifndef _FOC_TYPES_H_
 #define _FOC_TYPES_H_
 #include "stdint.h"
+void FOC_ThreePhase_Init(Three_Phase_t* self);
+void FOC_TwoPhase_Init(Two_Phase_t* self);
+void Two_Phase_trim(Two_Phase_t* self, foc_float_t min, foc_float_t max);
+void Three_Phase_trim(Three_Phase_t* self, foc_float_t min, foc_float_t max);
+
 typedef float foc_float_t;
 typedef int32_t foc_int_t;
 typedef struct
