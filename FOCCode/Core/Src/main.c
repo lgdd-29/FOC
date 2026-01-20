@@ -87,8 +87,10 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  FOC_Driver_t myMotor1;
-  FOC_HAL_t myMotor1HAL={
+  FOC_Driver_t myMotor1={   //电机1的硬件参数
+    .pole_pairs=7.0f
+  };
+  FOC_HAL_t myMotor1HAL={   //底层函数映射
     .SetPWM=MyPwmSetFunc,
     .GetAngle=MyEncoderGetFunc
   };
