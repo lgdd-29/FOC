@@ -1,0 +1,13 @@
+foccode\foc_driver.o: ..\Core\Src\Foc_Driver.c
+foccode\foc_driver.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h
+foccode\foc_driver.o: ../Drivers/CMSIS/Include/core_cm4.h
+foccode\foc_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+foccode\foc_driver.o: ../Drivers/CMSIS/Include/cmsis_version.h
+foccode\foc_driver.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
+foccode\foc_driver.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+foccode\foc_driver.o: ../Drivers/CMSIS/Include/mpu_armv7.h
+foccode\foc_driver.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
+foccode\foc_driver.o: ../Core/Inc/Foc_Driver.h
+foccode\foc_driver.o: ../Core/Inc/foc_types.h
+foccode\foc_driver.o: ../Core/Inc/Math_lia.h
+foccode\foc_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

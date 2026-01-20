@@ -61,7 +61,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void MyPwmSetFunc(ThreePhase_t* duty) {
+void MyPwmSetFunc(Three_Phase_t* duty) {
     // 操作寄存器设置PWM占空比
     // TIM1->CCR1 = duty.a; ...
 }
@@ -88,13 +88,11 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  FOC_Driver_t myMotor1={   //电机1的硬件参数
-    .pole_pairs=7.0f
-  };
-  FOC_HAL_t myMotor1HAL={   //底层函数映射
+FOC_Driver_t myMotor1;
+  FOC_HAL_t myMotor1HAL={
     .SetPWM=MyPwmSetFunc,
     .GetAngle=MyEncoderGetFunc
-  };
+ };
   
   /* USER CODE END Init */
 
@@ -119,6 +117,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+    myMotor1.Run(&myMotor1, 80.0f);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
