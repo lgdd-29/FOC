@@ -21,6 +21,7 @@ void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq)
     InvClarke_Transform(&self->v_alpha_beta, &v_abc);
 
     // 5. 设置PWM占空比
+    Three_Phase_trim(&v_abc, 0.0f, self->voltage_limit);
     self->hal.SetPWM(&v_abc);
 }
 
@@ -33,7 +34,7 @@ void FOC_Init_Impl(FOC_Driver_t* self)
     FOC_TwoPhase_Init(&self->v_dq);
     FOC_TwoPhase_Init(&self->I_alpha_beta);
     FOC_TwoPhase_Init(&self->I_dq);
-
+    
     self->electrical_angle = 0.0f;
 
     // 绑定函数实现

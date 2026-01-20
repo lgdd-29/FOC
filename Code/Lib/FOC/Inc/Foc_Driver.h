@@ -15,6 +15,7 @@ struct FOC_Driver_t
 {
     FOC_HAL_t hal;
     foc_float_t pole_pairs;
+    foc_float_t voltage_limit;
 
     Two_Phase_t v_alpha_beta;
     Two_Phase_t v_dq;

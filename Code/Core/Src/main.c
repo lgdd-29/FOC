@@ -59,8 +59,9 @@ static void MX_TIM1_Init(void);
 /* USER CODE BEGIN 0 */
 void MyPwmSetFunc(Three_Phase_t* duty) 
 {
-    // 操作寄存器设置PWM占空比
-    // TIM1->CCR1 = duty.a; ...
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, (uint32_t)(duty->a * (htim1.Init.Period+1)));
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
 }
 foc_float_t MyEncoderGetFunc(void) 
 {
@@ -108,6 +109,14 @@ int main(void)
     .GetAngle=MyEncoderGetFunc
   };
   FOC_Init_Impl(&myMotor1);
+
+
+  HAL_TIM_PWM_Init(&htim1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+
+  __HAL_TIM_MOE_ENABLE(&htim1); 
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -115,7 +124,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    FOC_Run_Impl(&myMotor1, 80);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
