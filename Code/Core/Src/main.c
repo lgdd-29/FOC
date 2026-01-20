@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "foc_typeds.h"
+#include "Foc_Driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +55,16 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void MyPwmSetFunc(Three_Phase_t* duty) 
+{
+    // 操作寄存器设置PWM占空比
+    // TIM1->CCR1 = duty.a; ...
+}
+foc_float_t MyEncoderGetFunc(void) 
+{
+    // 读取编码器角度值并返回，单位为弧度
+    return 0.0f;
+}
 /* USER CODE END 0 */
 
 /**
@@ -86,6 +97,14 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  FOC_Driver_t myMotor1={
+    .pole_pairs=7
+  };
+  FOC_HAL_t myMotor1_HAL={
+    .SetPWM=MyPwmSetFunc,
+    .GetAngle=MyEncoderGetFunc
+  };
+  FOC_Init_Impl(&myMotor1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -93,6 +112,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    FOC_Run_Impl(&myMotor1, 80.0f);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

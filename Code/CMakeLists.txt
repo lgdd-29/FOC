@@ -45,7 +45,9 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    Lib/FOC/Src/Foc.c
+    Lib/FOC/Src/Foc_Driver.c
+    Lib/FOC/Src/Math_lib.c
+    Lib/FOC/Src/foc_typeds.c
 )
 
 # Add include paths
