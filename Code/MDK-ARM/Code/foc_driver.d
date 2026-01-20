@@ -1,0 +1,9 @@
+code\foc_driver.o: ..\Lib\FOC\Src\Foc_Driver.c
+code\foc_driver.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h
+code\foc_driver.o: ../Drivers/CMSIS/Include/core_cm4.h
+code\foc_driver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+code\foc_driver.o: ../Drivers/CMSIS/Include/cmsis_version.h
+code\foc_driver.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
+code\foc_driver.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+code\foc_driver.o: ../Drivers/CMSIS/Include/mpu_armv7.h
+code\foc_driver.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
