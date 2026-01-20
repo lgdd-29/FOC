@@ -24,6 +24,7 @@
 #include "stm32f407xx.h"
 #include "led.h"
 #include "Foc_Driver.h"
+#include "foc_types.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

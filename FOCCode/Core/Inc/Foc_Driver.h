@@ -4,8 +4,7 @@
 #include "foc_types.h"
 #include "Math_lia.h"
 
-void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq);
-void FOC_Init_Impl(FOC_Driver_t* self);
+
 
 typedef struct FOC_Driver_t FOC_Driver_t;
 
@@ -29,5 +28,8 @@ struct FOC_Driver_t
     void (*Init)(FOC_Driver_t* self);
     void (*Run)(FOC_Driver_t* self, foc_float_t Uq);
 };
+
+void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq);
+void FOC_Init_Impl(FOC_Driver_t* self);
 
 #endif // _FOC_DRIVER_H_
