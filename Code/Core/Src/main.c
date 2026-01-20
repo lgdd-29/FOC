@@ -21,7 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "LED.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,7 +86,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  LED *led1 = LED_Create(GPIOA, GPIO_PIN_5); // 创建一个连接到PA5的LED对象=
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -95,7 +93,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    led1->Toggle(led1);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
