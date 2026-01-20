@@ -24,3 +24,27 @@ void InvPark_Transform(Two_Phase_t *in, Two_Phase_t *out, foc_float_t angle_rad)
     out->x = in->x * cos_angle - in->y * sin_angle;
     out->y = in->x * sin_angle + in->y * cos_angle;
 }
+
+void Normalize_Angle(foc_float_t* angle_rad)
+{
+    foc_float_t a=fmod(*angle_rad, 2.0f*PI_FOC);
+    *angle_rad = a>=0.0f? a : a + 2.0f*PI_FOC;
+}
+
+void Electrical_Angle_Calc(foc_float_t* mech_angle_rad, foc_float_t pole_pairs, foc_float_t* elec_angle_rad)
+{
+    *elec_angle_rad = (*mech_angle_rad) * pole_pairs;
+    Normalize_Angle(elec_angle_rad);
+}
+
+void Angle_Chance(foc_float_t* angle,foc_float_t* new_angle_rad)
+{
+    if(*angle>180.0f)
+    {
+        *new_angle_rad=(*angle-360.0f)*PI_FOC/180.0f;
+    }
+    else
+    {
+        *new_angle_rad=(*angle)*PI_FOC/180.0f;
+    }
+}
