@@ -12,8 +12,8 @@ typedef struct
 
 typedef struct 
 {
-    foc_float_t a;
-    foc_float_t b;
+    foc_float_t x;
+    foc_float_t y;
 }Two_Phase_t;
 
 
