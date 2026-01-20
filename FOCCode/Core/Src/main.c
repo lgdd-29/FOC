@@ -117,7 +117,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    myMotor1.Run(&myMotor1, 80.0f);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
