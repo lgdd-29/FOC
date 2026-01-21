@@ -13,7 +13,7 @@ Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
     pwm.c = abc->c/ self->voltage_limit;
     return pwm;
 }
-
+// TODO FOC_Run_Impl
 void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq)
 {
     foc_float_t Angle_new;
@@ -51,6 +51,7 @@ void FOC_Init_Impl(FOC_Driver_t* self)
     FOC_TwoPhase_Init(&self->I_dq);
 }
 
+//TODO FOC_Create
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal)
 {
     FOC_Driver_t* driver = (FOC_Driver_t*)malloc(sizeof(FOC_Driver_t));
