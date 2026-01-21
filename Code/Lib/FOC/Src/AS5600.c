@@ -37,7 +37,9 @@ uint8_t AS5600_READ(AS5600_Driver_t* self,uint8_t reg)
         self->i2c->MyI2C_Stop(self->i2c);
         return -1;
     }
-    self->i2c->MyI2C_Receive_Byte(self->i2c,&Data);
+    self->i2c->MyI2C_Receive_Byte(self->i2c,&Data1);
+    self->i2c->MyI2C_SendAck(self->i2c,0);
+    self->i2c->MyI2C_Receive_Byte(self->i2c,&Data2);
     self->i2c->MyI2C_SendAck(self->i2c,1);
     self->i2c->MyI2C_Stop(self->i2c);
     return Data;
