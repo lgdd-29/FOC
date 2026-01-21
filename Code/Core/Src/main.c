@@ -80,7 +80,7 @@ static void MX_USART1_UART_Init(void);
 
 
 /* USER CODE END 0 */
-
+//TODO main
 /**
   * @brief  The application entry point.
   * @retval int
@@ -133,7 +133,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+  //TODO while
   while (1)
   {
     /* USER CODE END WHILE */
@@ -191,6 +191,7 @@ void SystemClock_Config(void)
   }
 }
 
+//TODO TIM1_Init
 /**
   * @brief TIM1 Initialization Function
   * @param None
@@ -274,6 +275,7 @@ static void MX_TIM1_Init(void)
 
 }
 
+//TODO USART1_Init
 /**
   * @brief USART1 Initialization Function
   * @param None
@@ -306,6 +308,8 @@ static void MX_USART1_UART_Init(void)
   /* USER CODE END USART1_Init 2 */
 
 }
+
+//TODO GPIO_Init
 
 /**
   * @brief GPIO Initialization Function
