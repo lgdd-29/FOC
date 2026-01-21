@@ -55,7 +55,7 @@ void MyPwmSetFunc(Three_Phase_t* duty)
 foc_float_t MyEncoderGetFunc(void) 
 {
     static foc_float_t angle;
-    angle=angle+0.001f;
+    angle=angle+0.05f;
     return angle;
 }
 /* USER CODE END PV */
@@ -129,7 +129,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    FOC_Run_Impl(myMotor1, 5.0f);
+    FOC_Run_Impl(myMotor1, 10.0f);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
