@@ -1,4 +1,5 @@
-#include "stm32f4xx_it.h"                // Device header
+#include "stm32f4xx_hal_tim.h"
+#include "stm32f4xx_hal_tim_ex.h"
 #include <stdint.h>
 #include "Upper.h"
 //Ҫ����ʾ:
@@ -22,7 +23,7 @@ void Float_to_Byte(float f,unsigned char byte[])
     byte[3]=(unsigned char)(fl.ldata>>24);
 }
 //JustfloatЭ�鷢��
-void Float_send(float *data_array)
+void Float_send(float *data_array,UART_HandleTypeDef* huart)
 {
     //����Ϊ��������
     unsigned char tail[4] = {0x00, 0x00, 0x80, 0x7f};//����֡β
@@ -30,12 +31,12 @@ void Float_send(float *data_array)
     for (int i = 0; i < CH_COUNT; i++){
         unsigned char byte[4];
         Float_to_Byte(data_array[i],byte); // ��ÿ��floatת��Ϊ4���ֽ�
-        Send_array(byte,4);           // ������4���ֽ�
+        Send_array(byte,4,huart);           //4ֽ
     }
-    Send_array(tail,4);//��������֡β
+    Send_array(tail,4,huart);//֡β
 }
 
-void Send_array(unsigned char* byte, uint8_t Number)
+void Send_array(unsigned char* byte, uint8_t Number, UART_HandleTypeDef* huart)
 {
     int32_t i;
 
@@ -45,10 +46,10 @@ void Send_array(unsigned char* byte, uint8_t Number)
 
     for(i = 0; i < Number; i++)
     {
-        while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
+        while(__HAL_UART_GET_FLAG(huart, UART_FLAG_TXE) == RESET);
 
-        USART_SendData(USART2, byte[i]);
+        HAL_UART_Transmit(huart, &byte[i], 1, HAL_MAX_DELAY);
     }
 
-    while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+    while(__HAL_UART_GET_FLAG(huart, UART_FLAG_TC) == RESET);
 }

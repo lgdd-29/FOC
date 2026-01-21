@@ -1,10 +1,10 @@
 #ifndef __UPPER_H
 #define __UPPER_H
 
-#define CH_COUNT 1//ÕâÀïÊÇĞèÒª·¢ËÍµÄÍ¨µÀÊıÁ¿
+#define CH_COUNT 1//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Íµï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 void Float_to_Byte(float f,unsigned char byte[]);
-void Float_send(float *data_array);
-void Send_array(unsigned char* byte, uint8_t Number);
+void Float_send(float *data_array,UART_HandleTypeDef* huart);
+void Send_array(unsigned char* byte, uint8_t Number, UART_HandleTypeDef* huart);
 
 #endif
