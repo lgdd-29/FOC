@@ -3,6 +3,7 @@
 #include "Math_lib.h"
 #include "string.h"
 #include "foc_typeds.h"
+#include "stdlib.h"
 
 Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
 {
@@ -48,10 +49,20 @@ void FOC_Init_Impl(FOC_Driver_t* self)
     FOC_TwoPhase_Init(&self->v_dq);
     FOC_TwoPhase_Init(&self->I_alpha_beta);
     FOC_TwoPhase_Init(&self->I_dq);
+}
 
-    // 绑定函数实现
-    self->Init = FOC_Init_Impl;
-    self->Run = FOC_Run_Impl;
+FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal)
+{
+    FOC_Driver_t* driver = (FOC_Driver_t*)malloc(sizeof(FOC_Driver_t));
+    if (driver != NULL)
+    {
+        driver->pole_pairs = pole_pairs;
+        driver->voltage_limit = voltage_limit;
+        driver->hal = hal;
 
-    self->Init(self);
+        // 绑定函数实现
+        driver->Init = FOC_Init_Impl;
+        driver->Run = FOC_Run_Impl;
+    }
+    return driver;
 }

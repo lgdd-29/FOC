@@ -82,7 +82,12 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  
+    FOC_HAL_t myMotor1_HAL={
+    .SetPWM=MyPwmSetFunc,
+    .GetAngle=MyEncoderGetFunc
+  };
+  FOC_Driver_t* myMotor1=FOC_Create(7, 12, myMotor1_HAL);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -91,16 +96,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-    FOC_Driver_t myMotor1={
-    .pole_pairs=7,
-    .voltage_limit=12.0f
-  };
-  FOC_HAL_t myMotor1_HAL={
-    .SetPWM=MyPwmSetFunc,
-    .GetAngle=MyEncoderGetFunc
-  };
-  myMotor1.hal=myMotor1_HAL;
-  FOC_Init_Impl(&myMotor1);
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -121,16 +117,19 @@ int main(void)
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
-  
+
   __HAL_TIM_MOE_ENABLE(&htim1); 
+
+  FOC_Init_Impl(myMotor1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
     /* USER CODE END WHILE */
-    FOC_Run_Impl(&myMotor1, 5.0f);
+    FOC_Run_Impl(myMotor1, 5.0f);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -253,7 +252,7 @@ static void MX_TIM1_Init(void)
   sBreakDeadTimeConfig.DeadTime = 0x10;
   sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
   sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
-  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_ENABLE;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
   if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
   {
     Error_Handler();
