@@ -54,8 +54,6 @@ TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart1;
 
-UART_HandleTypeDef huart1;
-
 /* USER CODE BEGIN PV */
 void MyPwmSetFunc(Three_Phase_t* duty) 
 {
@@ -83,7 +81,7 @@ static void MX_USART1_UART_Init(void);
 
 
 /* USER CODE END 0 */
-//TODO main
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -148,9 +146,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-  angle_test=myas5600->GetAngle(myas5600);
-  Float_send(&angle_test,&huart1);
-    //FOC_Run_Impl(myMotor1, 10.0f);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -202,7 +198,6 @@ void SystemClock_Config(void)
   }
 }
 
-//TODO TIM1_Init
 /**
   * @brief TIM1 Initialization Function
   * @param None
@@ -286,7 +281,6 @@ static void MX_TIM1_Init(void)
 
 }
 
-//TODO USART1_Init
 /**
   * @brief USART1 Initialization Function
   * @param None
@@ -320,8 +314,6 @@ static void MX_USART1_UART_Init(void)
 
 }
 
-//TODO GPIO_Init
-
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -329,6 +321,7 @@ static void MX_USART1_UART_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
@@ -338,6 +331,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : PD0 PD1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   GPIO_InitTypeDef GPIO_InitStruct = {0};
