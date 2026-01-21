@@ -6,19 +6,20 @@
 void MyI2C_W_SCL(MyI2C_Driver_t* self, uint8_t BitValue)
 {
     HAL_GPIO_WritePin(self->SCL_port, self->SCL_pin, (GPIO_PinState)BitValue);
-    HAL_Delay(2);
+    HAL_Delay(1);
 }
 
 void MyI2C_W_SDA(MyI2C_Driver_t* self, uint8_t BitValue)
 {
     HAL_GPIO_WritePin(self->SDA_port, self->SDA_pin, (GPIO_PinState)BitValue);
-    HAL_Delay(2);
+    HAL_Delay(1);
 }
 
 uint8_t MyI2C_R_SDA(MyI2C_Driver_t* self)
 {
+     HAL_Delay(1);
     return HAL_GPIO_ReadPin(self->SDA_port, self->SDA_pin);
-    HAL_Delay(2);
+   
 }
 
 void MyI2C_Start(MyI2C_Driver_t* self)
@@ -109,7 +110,7 @@ void MyI2C_Init(MyI2C_Driver_t* self)
     MyI2C_W_SDA(self, 1);
 }
 
-MyI2C_Driver_t MyI2C_Creat(GPIO_TypeDef* SCL_port,uint16_t SCL_pin,GPIO_TypeDef* SDA_port,uint16_t SDA_pin)
+MyI2C_Driver_t MyI2C_Create(GPIO_TypeDef* SCL_port,uint16_t SCL_pin,GPIO_TypeDef* SDA_port,uint16_t SDA_pin)
 {
     MyI2C_Driver_t* myi2c=(MyI2C_Driver_t*)malloc(sizeof(MyI2C_Driver_t));
     //引脚分配

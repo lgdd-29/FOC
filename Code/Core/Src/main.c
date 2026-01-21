@@ -27,10 +27,15 @@
 #include "stm32f4xx_hal_tim.h"
 #include "stm32f4xx_hal_tim_ex.h"
 #include "Upper.h"
+#include "AS5600.h"
+#include "MyI2C.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+AS5600_Driver_t* myas5600;
+MyI2C_Driver_t myi2c;
+FOC_Driver_t* myMotor1;
 
 /* USER CODE END PTD */
 
@@ -60,9 +65,7 @@ void MyPwmSetFunc(Three_Phase_t* duty)
 }
 foc_float_t MyEncoderGetFunc(void) 
 {
-    static foc_float_t angle;
-    angle=angle+0.05f;
-    return angle;
+    return myas5600->GetAngle(myas5600)-myas5600->Angle_error;
 }
 /* USER CODE END PV */
 
@@ -93,8 +96,11 @@ int main(void)
     .SetPWM=MyPwmSetFunc,
     .GetAngle=MyEncoderGetFunc
   };
-  FOC_Driver_t* myMotor1=FOC_Create(7, 12, myMotor1_HAL);
-
+  myMotor1=FOC_Create(7, 12, myMotor1_HAL);
+  myi2c=MyI2C_Create(GPIOD,GPIO_PIN_0, GPIOD, GPIO_PIN_1);
+  myas5600=AS5600_Create(&myi2c,0x01,0x00,0x0C,0x0D,0x36);
+  
+  
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -128,16 +134,22 @@ int main(void)
 
   __HAL_TIM_MOE_ENABLE(&htim1); 
 
-  FOC_Init_Impl(myMotor1);
+ 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-  //TODO while
+  FOC_Init_Impl(myMotor1);
+  myas5600->Init(myas5600);
+  myas5600->AS5600_Calibrarion(myas5600);  //校准
+  float angle_test;
+ 
+  //TODO while 
   while (1)
   {
     /* USER CODE END WHILE */
+  angle_test=myas5600->GetAngle(myas5600);
+  Float_send(&angle_test,&huart1);
     //FOC_Run_Impl(myMotor1, 10.0f);
     /* USER CODE BEGIN 3 */
   }
