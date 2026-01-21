@@ -103,7 +103,8 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   FOC_Driver_t myMotor1={
-    .pole_pairs=7
+    .pole_pairs=7,
+    .voltage_limit=12.0f
   };
   FOC_HAL_t myMotor1_HAL={
     .SetPWM=MyPwmSetFunc,

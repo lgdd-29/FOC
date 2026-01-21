@@ -4,6 +4,15 @@
 #include "string.h"
 #include "foc_typeds.h"
 
+Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
+{
+    Three_Phase_t pwm;
+    pwm.a = (abc->a + 1.0f) / self->voltage_limit / 2.0f;
+    pwm.b = (abc->b + 1.0f) / self->voltage_limit / 2.0f;
+    pwm.c = (abc->c + 1.0f) / self->voltage_limit / 2.0f;
+    return pwm;
+}
+
 void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq)
 {
     foc_float_t Angle_new;
@@ -22,9 +31,12 @@ void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq)
     Three_Phase_t v_abc;
     InvClarke_Transform(&self->v_alpha_beta, &v_abc);
 
+    // 计算PWM占空比
+    Three_Phase_t v_pwm=Get_PWMval(self,&v_abc);
+
     // 5. 设置PWM占空比
-    Three_Phase_trim(&v_abc, 0.0f, self->voltage_limit);
-    self->hal.SetPWM(&v_abc);
+    Three_Phase_trim(&v_pwm, 0.0f, 1.0f); // 修剪到0-1范围内
+    self->hal.SetPWM(&v_pwm);
 }
 
 void FOC_Init_Impl(FOC_Driver_t* self)
