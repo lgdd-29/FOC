@@ -20,7 +20,7 @@ struct AS5600_Driver_t
 
     //函数映射
     void (*Init)(AS5600_Driver_t* self);
-    uint16_t (*GetAngle)(AS5600_Driver_t* self);
+    float (*GetAngle)(AS5600_Driver_t* self);
     void (*AS5600_Calibrarion)(AS5600_Driver_t* self);
 };
 
