@@ -27,3 +27,5 @@ code\stm32f4xx_hal_exti.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_fla
 code\stm32f4xx_hal_exti.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
 code\stm32f4xx_hal_exti.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 code\stm32f4xx_hal_exti.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+code\stm32f4xx_hal_exti.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
+code\stm32f4xx_hal_exti.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h

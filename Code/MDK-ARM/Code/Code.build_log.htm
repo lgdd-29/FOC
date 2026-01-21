@@ -5,7 +5,7 @@
 <h2>Tool Versions:</h2>
 IDE-Version: ¦ÌVision V5.14.1
 Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Cortex-M4, 1, LIC=CZLZX-H7MUZ-Z9CG9-4CYQ4-P01Q2-GPNLW
+License Information: 1 1, 1, LIC=CZLZX-H7MUZ-Z9CG9-4CYQ4-P01Q2-GPNLW
  
 Tool Versions:
 Toolchain:       MDK-ARM Standard  Version: 5.24.1
@@ -22,15 +22,35 @@ Dialog DLL:      TCM.DLL V1.32.0.0
  
 <h2>Project:</h2>
 C:\Learn\FOC\Code\MDK-ARM\Code.uvprojx
-Project File Date:  01/20/2026
+Project File Date:  01/21/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Code'
-compiling Foc_Driver.c...
-../Lib/FOC/Inc/Foc_Driver.h(32): warning:  #1-D: last line of file ends without a newline
+compiling main.c...
+../Lib/FOC/Inc/Foc_Driver.h(33): warning:  #1-D: last line of file ends without a newline
   #endif // _FOC_DRIVER_H_
-..\Lib\FOC\Src\Foc_Driver.c(44): warning:  #1-D: last line of file ends without a newline
+../Core/Src/main.c: 1 warning, 0 errors
+compiling stm32f4xx_it.c...
+compiling stm32f4xx_hal_msp.c...
+compiling stm32f4xx_hal_rcc.c...
+compiling stm32f4xx_hal_rcc_ex.c...
+compiling stm32f4xx_hal_flash.c...
+compiling stm32f4xx_hal_flash_ex.c...
+compiling stm32f4xx_hal_flash_ramfunc.c...
+compiling stm32f4xx_hal_gpio.c...
+compiling stm32f4xx_hal_dma_ex.c...
+compiling stm32f4xx_hal_dma.c...
+compiling stm32f4xx_hal_pwr.c...
+compiling stm32f4xx_hal_pwr_ex.c...
+compiling stm32f4xx_hal_cortex.c...
+compiling stm32f4xx_hal.c...
+compiling stm32f4xx_hal_exti.c...
+compiling system_stm32f4xx.c...
+compiling Foc_Driver.c...
+../Lib/FOC/Inc/Foc_Driver.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif // _FOC_DRIVER_H_
+..\Lib\FOC\Src\Foc_Driver.c(57): warning:  #1-D: last line of file ends without a newline
   }
 ..\Lib\FOC\Src\Foc_Driver.c: 2 warnings, 0 errors
 compiling foc_typeds.c...
@@ -39,13 +59,16 @@ compiling foc_typeds.c...
 ..\Lib\FOC\Src\foc_typeds.c: 1 warning, 0 errors
 compiling Math_lib.c...
 linking...
-Code\Code.axf: Warning: L6304W: Duplicate input file code\foc_driver_1.o ignored.
-Code\Code.axf: Warning: L6304W: Duplicate input file code\foc_typeds_1.o ignored.
-Code\Code.axf: Warning: L6304W: Duplicate input file code\math_lib_1.o ignored.
-Program Size: Code=7904 RO-data=536 RW-data=16 ZI-data=1632  
-Finished: 0 information, 3 warning and 0 error messages.
-FromELF: creating hex file...
-"Code\Code.axf" - 0 Error(s), 6 Warning(s).
+Code\Code.axf: Error: L6218E: Undefined symbol HAL_TIMEx_ConfigBreakDeadTime (referred from main.o).
+Code\Code.axf: Error: L6218E: Undefined symbol HAL_TIMEx_MasterConfigSynchronization (referred from main.o).
+Code\Code.axf: Error: L6218E: Undefined symbol HAL_TIM_Base_Init (referred from main.o).
+Code\Code.axf: Error: L6218E: Undefined symbol HAL_TIM_ConfigClockSource (referred from main.o).
+Code\Code.axf: Error: L6218E: Undefined symbol HAL_TIM_PWM_ConfigChannel (referred from main.o).
+Code\Code.axf: Error: L6218E: Undefined symbol HAL_TIM_PWM_Init (referred from main.o).
+Code\Code.axf: Error: L6218E: Undefined symbol HAL_TIM_PWM_Start (referred from main.o).
+Not enough information to list image symbols.
+Finished: 1 information, 0 warning and 7 error messages.
+"Code\Code.axf" - 7 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -63,6 +86,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
+Target not created.
 </pre>
 </body>
 </html>
