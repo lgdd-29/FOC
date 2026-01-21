@@ -30,7 +30,7 @@ float AS5600_READ(AS5600_Driver_t* self)
         self->i2c->MyI2C_Stop(self->i2c);
         return -1;
     }
-    self->i2c->MyI2C_Stop(self->i2c);
+    self->i2c->MyI2C_Start(self->i2c);
     self->i2c->MyI2C_Send_Byte(self->i2c,(self->AS5600_ADDRESS<<1)|self->READ_OP);
     self->i2c->MyI2C_ReceiveAck(self->i2c,&ack);
     if(ack!=0)

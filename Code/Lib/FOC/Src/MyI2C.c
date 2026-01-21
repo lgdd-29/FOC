@@ -6,18 +6,15 @@
 void MyI2C_W_SCL(MyI2C_Driver_t* self, uint8_t BitValue)
 {
     HAL_GPIO_WritePin(self->SCL_port, self->SCL_pin, (GPIO_PinState)BitValue);
-    HAL_Delay(1);
 }
 
 void MyI2C_W_SDA(MyI2C_Driver_t* self, uint8_t BitValue)
 {
     HAL_GPIO_WritePin(self->SDA_port, self->SDA_pin, (GPIO_PinState)BitValue);
-    HAL_Delay(1);
 }
 
 uint8_t MyI2C_R_SDA(MyI2C_Driver_t* self)
 {
-     HAL_Delay(1);
     return HAL_GPIO_ReadPin(self->SDA_port, self->SDA_pin);
    
 }
