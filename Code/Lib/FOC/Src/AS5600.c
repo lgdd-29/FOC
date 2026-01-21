@@ -39,9 +39,9 @@ float AS5600_READ(AS5600_Driver_t* self)
         return -1;
     }
     self->i2c->MyI2C_Receive_Byte(self->i2c,&Data1);
-    self->i2c->MyI2C_SendAck(self->i2c,1);
-    self->i2c->MyI2C_Receive_Byte(self->i2c,&Data2);
     self->i2c->MyI2C_SendAck(self->i2c,0);
+    self->i2c->MyI2C_Receive_Byte(self->i2c,&Data2);
+    self->i2c->MyI2C_SendAck(self->i2c,1);
     self->i2c->MyI2C_Stop(self->i2c);
     Angle=((Data1<<8)|Data2);
     return (foc_float_t)Angle*360.0f/4096.0f;
