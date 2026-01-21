@@ -5,7 +5,7 @@
 void Clarke_Transform(Three_Phase_t *in, Two_Phase_t *out)
 {
     out->x=in->a;
-    out->y=(in->a+2.0f*in->b)/sqrt(3.0f);
+    out->y=(in->b-in->c)*sqrt(3.0f);
 }
 
 void InvClarke_Transform(Two_Phase_t* in, Three_Phase_t* out)

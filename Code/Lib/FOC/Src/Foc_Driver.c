@@ -7,9 +7,9 @@
 Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
 {
     Three_Phase_t pwm;
-    pwm.a = (abc->a + 1.0f) / self->voltage_limit / 2.0f;
-    pwm.b = (abc->b + 1.0f) / self->voltage_limit / 2.0f;
-    pwm.c = (abc->c + 1.0f) / self->voltage_limit / 2.0f;
+    pwm.a = abc->a/ self->voltage_limit;
+    pwm.b = abc->b/ self->voltage_limit;
+    pwm.c = abc->c/ self->voltage_limit;
     return pwm;
 }
 
@@ -25,7 +25,7 @@ void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq)
     self->v_dq.y = Uq;   // Vq
 
     // 3. 逆Park变换得到αβ坐标系下的电压
-    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, self->hal.GetAngle());
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, self->electrical_angle);
 
     // 4. 逆Clarke变换得到三相电压
     Three_Phase_t v_abc;

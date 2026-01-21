@@ -539,36 +539,6 @@
               <FilePath>..\Lib\FOC\Inc\Math_lib.h</FilePath>
             </File>
             <File>
-              <FileName>Foc_Driver.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Lib\FOC\Inc\Foc_Driver.h</FilePath>
-            </File>
-            <File>
-              <FileName>foc_typeds.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Lib\FOC\Inc\foc_typeds.h</FilePath>
-            </File>
-            <File>
-              <FileName>Math_lib.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Lib\FOC\Inc\Math_lib.h</FilePath>
-            </File>
-            <File>
-              <FileName>Foc_Driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Lib\FOC\Src\Foc_Driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>foc_typeds.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Lib\FOC\Src\foc_typeds.c</FilePath>
-            </File>
-            <File>
-              <FileName>Math_lib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Lib\FOC\Src\Math_lib.c</FilePath>
-            </File>
-            <File>
               <FileName>Foc_Driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Lib\FOC\Src\Foc_Driver.c</FilePath>
