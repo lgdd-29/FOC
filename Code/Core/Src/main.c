@@ -65,8 +65,9 @@ void MyPwmSetFunc(Three_Phase_t* duty)
 }
 foc_float_t MyEncoderGetFunc(void) 
 {
-    // 读取编码器角度值并返回，单位为弧度
-    return 0.0f;
+    static foc_float_t angle;
+    angle=angle+0.001f;
+    return angle;
 }
 /* USER CODE END 0 */
 
@@ -108,6 +109,7 @@ int main(void)
     .SetPWM=MyPwmSetFunc,
     .GetAngle=MyEncoderGetFunc
   };
+  myMotor1.hal=myMotor1_HAL;
   FOC_Init_Impl(&myMotor1);
 
 
@@ -124,7 +126,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    FOC_Run_Impl(&myMotor1, 80.0f);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

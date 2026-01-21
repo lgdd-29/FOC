@@ -6,15 +6,17 @@
 
 void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq)
 {
+    foc_float_t Angle_new;
+    Angle_new=self->hal.GetAngle();  //获取当前角度
     // 1. 计算电气角
-    Electrical_Angle_Calc(&self->electrical_angle, self->pole_pairs, &self->electrical_angle);
+    Electrical_Angle_Calc(&Angle_new, self->pole_pairs, &self->electrical_angle);
 
     // 2. 设置d轴电压为0，q轴电压为Uq
     self->v_dq.x = 0.0f; // Vd
     self->v_dq.y = Uq;   // Vq
 
     // 3. 逆Park变换得到αβ坐标系下的电压
-    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, self->electrical_angle);
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, self->hal.GetAngle());
 
     // 4. 逆Clarke变换得到三相电压
     Three_Phase_t v_abc;
@@ -34,8 +36,6 @@ void FOC_Init_Impl(FOC_Driver_t* self)
     FOC_TwoPhase_Init(&self->v_dq);
     FOC_TwoPhase_Init(&self->I_alpha_beta);
     FOC_TwoPhase_Init(&self->I_dq);
-    
-    self->electrical_angle = 0.0f;
 
     // 绑定函数实现
     self->Init = FOC_Init_Impl;

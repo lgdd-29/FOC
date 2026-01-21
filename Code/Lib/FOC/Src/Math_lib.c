@@ -40,18 +40,19 @@ void Normalize_Angle(foc_float_t* angle_rad)
 
 void Electrical_Angle_Calc(foc_float_t* mech_angle_rad, foc_float_t pole_pairs, foc_float_t* elec_angle_rad)
 {
-    *elec_angle_rad = (*mech_angle_rad) * pole_pairs;
-    Normalize_Angle(elec_angle_rad);
+    *elec_angle_rad = (*mech_angle_rad) * pole_pairs;  //乘以极对数
+    Angle_Chance(elec_angle_rad);  //转为弧度
+    Normalize_Angle(elec_angle_rad);  //归一化到0~2π
 }
 
-void Angle_Chance(foc_float_t* angle,foc_float_t* new_angle_rad)
+void Angle_Chance(foc_float_t* angle)
 {
     if(*angle>180.0f)
     {
-        *new_angle_rad=(*angle-360.0f)*PI/180.0f;
+        *angle=(*angle-360.0f)*PI/180.0f;
     }
     else
     {
-        *new_angle_rad=(*angle)*PI/180.0f;
+        *angle=(*angle)*PI/180.0f;
     }
 }
