@@ -49,6 +49,8 @@ TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart1;
 
+UART_HandleTypeDef huart1;
+
 /* USER CODE BEGIN PV */
 void MyPwmSetFunc(Three_Phase_t* duty) 
 {
@@ -135,8 +137,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
-    //FOC_Run_Impl(myMotor1, 0.0f);
+    FOC_Run_Impl(myMotor1, 10.0f);
     /* USER CODE BEGIN 3 */
     HAL_UART_Transmit(&huart1, (uint8_t *)"FOC Running...\r\n", 16, HAL_MAX_DELAY);
     HAL_Delay(300);

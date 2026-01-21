@@ -17,7 +17,6 @@ void Float_to_Byte(float f,unsigned char byte[])
     byte[2]=(unsigned char)(fl.ldata>>16);
     byte[3]=(unsigned char)(fl.ldata>>24);
 }
-
 void Float_send(float *data_array,UART_HandleTypeDef* huart)
 {
 
