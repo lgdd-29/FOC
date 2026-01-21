@@ -25,25 +25,7 @@ void Float_send(float *data_array,UART_HandleTypeDef* huart)
     for (int i = 0; i < CH_COUNT; i++){
         unsigned char byte[4];
         Float_to_Byte(data_array[i],byte); 
-        Send_array(byte,4,huart);           
+        HAL_UART_Transmit(huart, byte, 4, HAL_MAX_DELAY);           
     }
-    Send_array(tail,4,huart);//֡β
-}
-
-void Send_array(unsigned char* byte, uint8_t Number, UART_HandleTypeDef* huart)
-{
-    int32_t i;
-
-    if(byte == 0 || Number == 0){
-        return;
-    }
-
-    for(i = 0; i < Number; i++)
-    {
-       while(__HAL_UART_GET_FLAG(huart, UART_FLAG_TXE) == RESET);
-
-       HAL_UART_Transmit(huart, &byte[i], 1, HAL_MAX_DELAY);
-    }
-
-    while(__HAL_UART_GET_FLAG(huart, UART_FLAG_TC) == RESET);
+    HAL_UART_Transmit(huart, tail, 4, HAL_MAX_DELAY);//发送结束标志
 }

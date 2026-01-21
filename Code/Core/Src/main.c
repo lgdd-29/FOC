@@ -133,14 +133,19 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  foc_float_t I[1]={1.0f};
   //TODO while
   while (1)
   {
     /* USER CODE END WHILE */
-    FOC_Run_Impl(myMotor1, 10.0f);
+    //FOC_Run_Impl(myMotor1, 10.0f);
     /* USER CODE BEGIN 3 */
-    HAL_UART_Transmit(&huart1, (uint8_t *)"FOC Running...\r\n", 16, HAL_MAX_DELAY);
-    HAL_Delay(300);
+    Float_send(I,&huart1);
+    I[0]+=1.0f;
+    if(I[0]>360.0f)
+    {
+      I[0]=0.0f;
+    }
   }
   /* USER CODE END 3 */
 }
