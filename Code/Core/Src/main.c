@@ -25,6 +25,7 @@
 #include "Foc_Driver.h"
 #include "stm32f4xx_hal_tim.h"
 #include "stm32f4xx_hal_tim_ex.h"
+#include "Upper.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
