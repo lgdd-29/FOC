@@ -46,7 +46,18 @@
 TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
-
+void MyPwmSetFunc(Three_Phase_t* duty) 
+{
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, (uint32_t)(duty->a * (htim1.Init.Period+1)));
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
+}
+foc_float_t MyEncoderGetFunc(void) 
+{
+    static foc_float_t angle;
+    angle=angle+0.001f;
+    return angle;
+}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -71,7 +82,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -80,7 +91,16 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+    FOC_Driver_t myMotor1={
+    .pole_pairs=7,
+    .voltage_limit=12.0f
+  };
+  FOC_HAL_t myMotor1_HAL={
+    .SetPWM=MyPwmSetFunc,
+    .GetAngle=MyEncoderGetFunc
+  };
+  myMotor1.hal=myMotor1_HAL;
+  FOC_Init_Impl(&myMotor1);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -101,7 +121,7 @@ int main(void)
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
-
+  
   __HAL_TIM_MOE_ENABLE(&htim1); 
   /* USER CODE END 2 */
 
@@ -110,10 +130,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    //myMotor1.hal.SetPWM(&duty_val);
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 1000);
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000); 
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);  
+    FOC_Run_Impl(&myMotor1, 5.0f);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
