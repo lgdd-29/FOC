@@ -23,6 +23,8 @@
 /* USER CODE BEGIN Includes */
 #include "foc_typeds.h"
 #include "Foc_Driver.h"
+#include "stm32f4xx_hal_tim.h"
+#include "stm32f4xx_hal_tim_ex.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,18 +59,8 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void MyPwmSetFunc(Three_Phase_t* duty) 
-{
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, (uint32_t)(duty->a * (htim1.Init.Period+1)));
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
-}
-foc_float_t MyEncoderGetFunc(void) 
-{
-    static foc_float_t angle;
-    angle=angle+0.001f;
-    return angle;
-}
+
+
 /* USER CODE END 0 */
 
 /**
@@ -95,31 +87,21 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  __HAL_RCC_TIM1_CLK_ENABLE();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  FOC_Driver_t myMotor1={
-    .pole_pairs=7,
-    .voltage_limit=12.0f
-  };
-  FOC_HAL_t myMotor1_HAL={
-    .SetPWM=MyPwmSetFunc,
-    .GetAngle=MyEncoderGetFunc
-  };
-  myMotor1.hal=myMotor1_HAL;
-  FOC_Init_Impl(&myMotor1);
-
-
   HAL_TIM_PWM_Init(&htim1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
 
-  Three_Phase_t duty_val={0.5,0.5,0.5};
   __HAL_TIM_MOE_ENABLE(&htim1); 
   /* USER CODE END 2 */
 
@@ -128,8 +110,10 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    //FOC_Run_Impl(&myMotor1, 80.0f);
-    myMotor1.hal.SetPWM(&duty_val);
+    //myMotor1.hal.SetPWM(&duty_val);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 1000);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 1000); 
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 1000);  
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -207,7 +191,7 @@ static void MX_TIM1_Init(void)
   htim1.Init.Period = 2749;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
-  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
   {
     Error_Handler();
@@ -228,12 +212,12 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
+  sConfigOC.Pulse = 1000;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  sConfigOC.OCIdleState = TIM_OCIDLESTATE_SET;
-  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_SET;
   if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
@@ -252,7 +236,7 @@ static void MX_TIM1_Init(void)
   sBreakDeadTimeConfig.DeadTime = 0x10;
   sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
   sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
-  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_ENABLE;
   if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
   {
     Error_Handler();
@@ -282,7 +266,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOE_CLK_ENABLE();
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
-
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_11|GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF1_TIM1;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
