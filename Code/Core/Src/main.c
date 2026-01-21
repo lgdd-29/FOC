@@ -119,6 +119,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
+  Three_Phase_t duty_val={0.5,0.5,0.5};
   __HAL_TIM_MOE_ENABLE(&htim1); 
   /* USER CODE END 2 */
 
@@ -127,7 +128,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    FOC_Run_Impl(&myMotor1, 80.0f);
+    //FOC_Run_Impl(&myMotor1, 80.0f);
+    myMotor1.hal.SetPWM(&duty_val);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
