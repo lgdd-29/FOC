@@ -48,6 +48,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Lib/FOC/Src/Foc_Driver.c
     Lib/FOC/Src/Math_lib.c
     Lib/FOC/Src/foc_typeds.c
+    Lib/FOC/Src/Upper.c
 )
 
 # Add include paths
