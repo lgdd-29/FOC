@@ -21,6 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "Math_lib.h"
 #include "foc_typeds.h"
 #include "Foc_Driver.h"
 #include "stm32f4xx_hal.h"
@@ -91,6 +92,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+
+
   //PARA FOC驱动接口
     FOC_HAL_t myMotor1_HAL={
     .SetPWM=MyPwmSetFunc,
@@ -140,20 +143,21 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  FOC_Init_Impl(myMotor1);
+  myMotor1->Init(myMotor1);
   myas5600->Init(myas5600);
   myas5600->AS5600_Calibrarion(myas5600);  //校准
-  float angle_test;
- 
+  //float angle_test;
+  myMotor1->Site(myMotor1,PI/2,2.0f,0.001f);
+
   //TODO while 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  angle_test=myas5600->GetAngle(myas5600);
-  Float_send(&angle_test,&huart1);
-    //FOC_Run_Impl(myMotor1, 10.0f);
+  //angle_test=myas5600->GetAngle(myas5600);
+  //Float_send(&angle_test,&huart1);
+  myMotor1->Run(myMotor1,0.005f);
   }
   /* USER CODE END 3 */
 }

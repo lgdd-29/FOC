@@ -1,3 +1,4 @@
+#include "FOC_typeds.h"
 #include "stm32f407xx.h"
 #include "PI.h"
 #include "stdlib.h"
@@ -34,24 +35,50 @@ foc_float_t PI_OUT(PI_Driver_t* self,foc_float_t error,foc_float_t dt)
 // FUN PI_Reset
 void PI_Reset(PI_Driver_t* self)
 {
-    self->integral = 0;
-    self->Prev_error = 0;
+    self->integral = 0;    // 清零积分项
+    self->Prev_error = 0;  // 清零前一误差
+}
+
+void PI_Init(PI_Driver_t* self)
+{
+    self->Kp = 0;
+    self->Ki = 0;   
+    self->integral_limit = 1000.0f; // 默认积分限幅值
+    self->output_limit = 1000.0f;   // 默认输出限幅值
+    self->integral = 0.0f;
+    self->Prev_error = 0.0f;
+}
+
+
+
+foc_float_t State_OUT(State_Driver_t* self,foc_float_t dt)
+{
+    foc_float_t error = self->expert - self->now;
+    foc_float_t out=self->pi.PI_OUT(&self->pi,error,dt);
+    return out;
+}
+
+void State_Init(State_Driver_t* self)
+{
+    self->pi.integral=0;
+    self->pi.integral_limit=1000.0f;
+    self->pi.Prev_error=0;
+    self->pi.Ki=0;
+    self->pi.Kp=0;
+    self->pi.PI_Init(&self->pi);
 }
 
 //FUN PI_Create
-PI_Driver_t* PI_Create(foc_float_t Kp, foc_float_t Ki)
+void PI_Create(PI_Driver_t* self)
 {
-    PI_Driver_t* pi = (PI_Driver_t*)malloc(sizeof(PI_Driver_t));
-    if (pi != NULL)
-    {
-        pi->Kp = Kp;
-        pi->Ki = Ki;
-        pi->integral_limit = 1000.0f; // 默认积分限幅值
-        pi->output_limit = 1000.0f;   // 默认输出限幅值
-        pi->integral = 0.0f;
-        pi->Prev_error = 0.0f;
-        pi->PI_OUT = PI_OUT;
-        pi->PI_Reset = PI_Reset;
-    }
-    return pi;
+    self->PI_OUT = PI_OUT;
+    self->PI_Reset = PI_Reset;
+    self->PI_Init = PI_Init;
+}
+void State_Create(State_Driver_t* self)
+{
+    self->State_OUT=State_OUT;
+    self->State_Init=State_Init;
+
+    PI_Create(&self->pi);
 }

@@ -17,6 +17,9 @@ typedef struct
 struct FOC_Driver_t
 {
     FOC_HAL_t hal;
+
+    State_Driver_t site;
+
     foc_float_t pole_pairs;
     foc_float_t voltage_limit;
 
@@ -27,10 +30,9 @@ struct FOC_Driver_t
     foc_float_t electrical_angle;
 
     void (*Init)(FOC_Driver_t* self);  
-    void (*Run)(FOC_Driver_t* self, foc_float_t Uq);
+    void (*Run)(FOC_Driver_t* self,foc_float_t dt);
+    void (*Site)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
 };
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal);
-void FOC_Run_Impl(FOC_Driver_t* self, foc_float_t Uq);
-void FOC_Init_Impl(FOC_Driver_t* self);
 
 #endif // _FOC_DRIVER_H_
