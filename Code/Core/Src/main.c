@@ -65,7 +65,7 @@ void MyPwmSetFunc(Three_Phase_t* duty)
 //PARA 编码器读取函数接口
 foc_float_t MyEncoderGetFunc(void) 
 {
-    return (myas5600->GetAngle(myas5600))-myas5600->Angle_error;
+    return (myas5600->GetAngle(myas5600));
 }
 /* USER CODE END PV */
 
@@ -99,7 +99,7 @@ int main(void)
     .SetPWM=MyPwmSetFunc,
     .GetAngle=MyEncoderGetFunc
   };
-  myMotor1=FOC_Create(7, 6, myMotor1_HAL);
+  myMotor1=FOC_Create(7, 12, myMotor1_HAL);
   //PARA AS5600驱动接口
   myi2c=MyI2C_Create(GPIOD,GPIO_PIN_0, GPIOD, GPIO_PIN_1);
   myas5600=AS5600_Create(&myi2c,0x01,0x00,0x0C,0x0D,0x36);
@@ -151,7 +151,7 @@ int main(void)
   myMotor1->Site(myMotor1,3*PI/2,10.0f,0.0f);
   myMotor1->Run(myMotor1,0.01f);
   HAL_Delay(1000);
-  myas5600->AS5600_Calibrarion(myas5600);  
+  myMotor1->site.pi.Prev_error=myas5600->AS5600_Calibrarion(myas5600);  
   myMotor1->Site(myMotor1,3*PI/2,0.0f,0.01f);
   myMotor1->Run(myMotor1,0.01f);
 
@@ -168,9 +168,8 @@ int main(void)
   angle_test=myas5600->GetAngle(myas5600)-myas5600->Angle_error;
   Normalize_Angle(&angle_test);
   Float_send(&angle_test,&huart1);*/
-
   myMotor1->Run(myMotor1,0.01f);
-
+  
   }
   /* USER CODE END 3 */
 }

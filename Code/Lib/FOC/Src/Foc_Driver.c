@@ -11,23 +11,33 @@ Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
     pwm.a = abc->a/ self->voltage_limit;
     pwm.b = abc->b/ self->voltage_limit;
     pwm.c = abc->c/ self->voltage_limit;
+    Three_Phase_trim(&pwm, 0.0f, 1.0f);
+
     return pwm;
 }
 // TODO FOC_Run_Impl
 void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 {
+
+
     foc_float_t Angle_new;
     Angle_new=self->hal.GetAngle();  //获取当前角度
-    // 1. 计算电气角
-    Electrical_Angle_Calc(&Angle_new, self->pole_pairs, &self->electrical_angle);
+    foc_float_t Angle_error=self->site.expert-Angle_new;  //期望角度-当前角度
 
-    self->site.now=self->electrical_angle;
+    foc_float_t v_q = self->site.pi.Kp * Angle_error;
+    (v_q)<(-6)?(-6):((v_q)>(6)?(6):(v_q));
+
     // 2. 设置d轴电压为0，q轴电压为Uq
     self->v_dq.x = 0.0f; // Vd
-    self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
+    self->v_dq.y = v_q;
+    //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
+    Angle_new=Angle_new*7-self->site.pi.Prev_error;
+    Normalize_Angle(&Angle_new);
+
 
     // 3. 逆Park变换得到αβ坐标系下的电压
-    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, self->electrical_angle);
+    Normalize_Angle(&Angle_new);
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
 
     // 4. 逆Clarke变换得到三相电压
     Three_Phase_t v_abc;
