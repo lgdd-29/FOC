@@ -9,6 +9,7 @@
 void AS5600_Init(AS5600_Driver_t* self)
 {
     self->i2c->MyI2C_Init(self->i2c);
+    self->Angle_error=0;
 }
 
 float AS5600_READ(AS5600_Driver_t* self)
@@ -51,6 +52,7 @@ float AS5600_READ(AS5600_Driver_t* self)
 foc_float_t AS5600_Calibrarion(AS5600_Driver_t* self)
 {
     // 校准函数：计算100次读数的平均值作为角度误差
+    
     for(uint8_t i=0;i<100;i++)
     {
         self->Angle_error+=AS5600_READ(self);  // 累加100次角度读数

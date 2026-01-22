@@ -31,7 +31,7 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
     self->v_dq.x = 0.0f; // Vd
     self->v_dq.y = v_q;
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
-    Angle_new=Angle_new*7-self->site.pi.Prev_error;
+    Angle_new=Angle_new*7-self->Angle_zero;
     Normalize_Angle(&Angle_new);
 
 
@@ -54,7 +54,7 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 void FOC_Init_Impl(FOC_Driver_t* self)
 {
     // 初始化各个成员变量
-
+    self->Angle_zero=0;
     // 初始化电压和电流结构体
     FOC_TwoPhase_Init(&self->v_alpha_beta);
     FOC_TwoPhase_Init(&self->v_dq);

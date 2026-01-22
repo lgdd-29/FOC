@@ -12,6 +12,7 @@ typedef struct
 {  
     void (*SetPWM)(Three_Phase_t* duty);
     foc_float_t (*GetAngle)(void);
+    void (*Angle_zero_GET)(FOC_Driver_t* self);
 }FOC_HAL_t;
 
 struct FOC_Driver_t
@@ -22,6 +23,8 @@ struct FOC_Driver_t
 
     foc_float_t pole_pairs;
     foc_float_t voltage_limit;
+    foc_float_t Angle_zero;
+
 
     Two_Phase_t v_alpha_beta;
     Two_Phase_t v_dq;
