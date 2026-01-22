@@ -5,14 +5,15 @@
 void Clarke_Transform(Three_Phase_t *in, Two_Phase_t *out)
 {
     out->x=in->a;
-    out->y=(in->b-in->c)*sqrt(3.0f);
+    out->y=sqrt(3.0f)*(2*in->b+in->a);
 }
 
+//BUG 这里的+6看一下有没有更好的办法平替
 void InvClarke_Transform(Two_Phase_t* in, Three_Phase_t* out)
 {
-    out->a = in->x;
-    out->b = (-in->x + sqrt(3.0f) * in->y) / 2.0f;
-    out->c = (-in->x - sqrt(3.0f) * in->y) / 2.0f;
+    out->a = in->x+6;
+    out->b = (-0.5f * in->x + 0.86602540378f * in->y)+6; // (-x/2 + y*sqrt(3)/2)
+    out->c = (-0.5f * in->x - 0.86602540378f * in->y)+6; // (-x/2 - y*sqrt(3)/2)
 }
 
 void Park_Transform(Two_Phase_t *in, Two_Phase_t *out, foc_float_t angle_rad)
@@ -38,21 +39,20 @@ void Normalize_Angle(foc_float_t* angle_rad)
     *angle_rad = a>=0.0f? a : a + 2.0f*PI;
 }
 
-void Electrical_Angle_Calc(foc_float_t* mech_angle_rad, foc_float_t pole_pairs, foc_float_t* elec_angle_rad)
+void Electrical_Angle_Calc(foc_float_t* mech_angle, foc_float_t pole_pairs, foc_float_t* elec_angle_rad)
 {
-    *elec_angle_rad = (*mech_angle_rad) * pole_pairs;  //乘以极对数
-    Angle_Chance(elec_angle_rad);  //转为弧度
+    *elec_angle_rad = (*mech_angle) * pole_pairs;  //乘以极对数
     Normalize_Angle(elec_angle_rad);  //归一化到0~2π
 }
 
 void Angle_Chance(foc_float_t* angle)
 {
-    if(*angle>180.0f)
+    if(*angle>2*PI)
     {
-        *angle=(*angle-360.0f)*PI/180.0f;
+        *angle=(*angle-2*PI);
     }
     else
     {
-        *angle=(*angle)*PI/180.0f;
+        *angle=(*angle);
     }
 }

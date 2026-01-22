@@ -1,3 +1,4 @@
+#include "Math_lib.h"
 #include "foc_typeds.h"
 #include "stm32f407xx.h"
 #include "AS5600.h"
@@ -44,17 +45,17 @@ float AS5600_READ(AS5600_Driver_t* self)
     self->i2c->MyI2C_SendAck(self->i2c,1);
     self->i2c->MyI2C_Stop(self->i2c);
     Angle=((Data1<<8)|Data2);
-    return (foc_float_t)Angle*360.0f/4096.0f;
+    return (foc_float_t)Angle*2*PI/4096.0f;
 }
 
 void AS5600_Calibrarion(AS5600_Driver_t* self)
 {
-    //TODO 校准函数
-    for(uint8_t i=0;i<10;i++)
+    // 校准函数：计算100次读数的平均值作为角度误差
+    for(uint8_t i=0;i<100;i++)
     {
-        self->Angle_error+=AS5600_READ(self);
+        self->Angle_error+=AS5600_READ(self);  // 累加100次角度读数
     }
-    self->Angle_error/=10.0f;
+    self->Angle_error/=100.0f;  // 计算平均值作为校准后的角度误差
 
 }
 

@@ -43,8 +43,8 @@ void PI_Init(PI_Driver_t* self)
 {
     self->Kp = 0;
     self->Ki = 0;   
-    self->integral_limit = 1000.0f; // 默认积分限幅值
-    self->output_limit = 1000.0f;   // 默认输出限幅值
+    self->integral_limit = 6.0f; // 默认积分限幅值
+    self->output_limit = 6.0f;   // 默认输出限幅值
     self->integral = 0.0f;
     self->Prev_error = 0.0f;
 }
