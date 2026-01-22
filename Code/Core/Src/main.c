@@ -53,7 +53,7 @@ FOC_Driver_t* myMotor1;
 TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart1;
-
+//PARA PWM硬件函数接口
 /* USER CODE BEGIN PV */
 void MyPwmSetFunc(Three_Phase_t* duty) 
 {
@@ -61,6 +61,7 @@ void MyPwmSetFunc(Three_Phase_t* duty)
   __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
   __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
 }
+//PARA 编码器读取函数接口
 foc_float_t MyEncoderGetFunc(void) 
 {
     return myas5600->GetAngle(myas5600)-myas5600->Angle_error;
@@ -78,7 +79,7 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//TODO main
 
 /* USER CODE END 0 */
 
@@ -90,11 +91,13 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+  //PARA FOC驱动接口
     FOC_HAL_t myMotor1_HAL={
     .SetPWM=MyPwmSetFunc,
     .GetAngle=MyEncoderGetFunc
   };
   myMotor1=FOC_Create(7, 12, myMotor1_HAL);
+  //PARA AS5600驱动接口
   myi2c=MyI2C_Create(GPIOD,GPIO_PIN_0, GPIOD, GPIO_PIN_1);
   myas5600=AS5600_Create(&myi2c,0x01,0x00,0x0C,0x0D,0x36);
   
@@ -210,7 +213,7 @@ static void MX_TIM1_Init(void)
 {
 
   /* USER CODE BEGIN TIM1_Init 0 */
-
+  //TODO MX_TIM1_Init
   /* USER CODE END TIM1_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
@@ -293,7 +296,7 @@ static void MX_USART1_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART1_Init 0 */
-
+  //TODO MX_USART1_UART_Init
   /* USER CODE END USART1_Init 0 */
 
   /* USER CODE BEGIN USART1_Init 1 */
@@ -326,6 +329,7 @@ static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
+  //TODO MX_GPIO_Init
 
   /* USER CODE END MX_GPIO_Init_1 */
 

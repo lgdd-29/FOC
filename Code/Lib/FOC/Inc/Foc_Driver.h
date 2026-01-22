@@ -3,6 +3,9 @@
 
 #include "foc_typeds.h"
 #include "Math_lib.h"
+#include "PI.h"
+
+//PARA FOC的结构体
 typedef struct FOC_Driver_t FOC_Driver_t;
 
 typedef struct
@@ -23,7 +26,7 @@ struct FOC_Driver_t
     Two_Phase_t I_dq;
     foc_float_t electrical_angle;
 
-    void (*Init)(FOC_Driver_t* self);  //没有映射
+    void (*Init)(FOC_Driver_t* self);  
     void (*Run)(FOC_Driver_t* self, foc_float_t Uq);
 };
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal);

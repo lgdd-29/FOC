@@ -45,12 +45,14 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    # TODO Cmake放c文件地址
     Lib/FOC/Src/Foc_Driver.c
     Lib/FOC/Src/Math_lib.c
     Lib/FOC/Src/foc_typeds.c
     Lib/FOC/Src/Upper.c
     Lib/FOC/Src/MyI2C.c
     Lib/FOC/Src/AS5600.c
+    Lib/FOC/Src/PI.c
 )
 
 # Add include paths
