@@ -147,7 +147,7 @@ int main(void)
   myas5600->Init(myas5600);
   myas5600->AS5600_Calibrarion(myas5600);  //校准
   //float angle_test;
-  myMotor1->Site(myMotor1,PI/2,2.0f,0.001f);
+  myMotor1->Site(myMotor1,PI/2,5.0f,0.01f);
 
   //TODO while 
   while (1)
