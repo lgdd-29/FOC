@@ -25,6 +25,7 @@
 #include "foc_typeds.h"
 #include "Foc_Driver.h"
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_def.h"
 #include "stm32f4xx_hal_tim.h"
 #include "stm32f4xx_hal_tim_ex.h"
 #include "Upper.h"
@@ -57,18 +58,7 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-//PARA PWM硬件函数接口
-void MyPwmSetFunc(Three_Phase_t* duty) 
-{
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, (uint32_t)(duty->a * (htim1.Init.Period+1)));
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
-}
-//PARA 编码器读取函数接口
-foc_float_t MyEncoderGetFunc(void) 
-{
-    return (myas5600->GetAngle(myas5600));
-}
+
 
 /* USER CODE END PV */
 
@@ -84,7 +74,26 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//PARA PWM硬件函数接口
+void MyPwmSetFunc(Three_Phase_t* duty) 
+{
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, (uint32_t)(duty->a * (htim1.Init.Period+1)));
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
+}
+//PARA 编码器读取函数接口
+foc_float_t MyEncoderGetFunc(void) 
+{
+    return (myas5600->GetAngle(myas5600));
+}
+//TODO 定时器中断函数
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if(htim==&htim2)
+  {
+      myMotor1->Run(myMotor1,0.05f);
+  }
+}
 
 /* USER CODE END 0 */
 
@@ -143,6 +152,7 @@ int main(void)
 
   __HAL_TIM_MOE_ENABLE(&htim1); 
 
+
  
   /* USER CODE END 2 */
 
@@ -156,7 +166,10 @@ int main(void)
   myMotor1->Angle_zero_GET(myMotor1);
 
   //PARA 位置环kp,ki
-  myMotor1->Site(myMotor1,0,1.0f,0.0f);
+  myMotor1->Site(myMotor1,PI,1.0f,0.0f);
+
+  HAL_TIM_Base_Start_IT(&htim2);
+
   //TODO while 
   while (1)
   {
@@ -164,11 +177,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-  /*float angle_test;
-  angle_test=myas5600->GetAngle(myas5600);
-  Normalize_Angle(&angle_test);
-  Float_send(&angle_test,&huart1);*/
-  myMotor1->Run(myMotor1,0.01f);
+  float angle_test;
+  angle_test=myMotor1->site.now;
+  Float_send(&angle_test,&huart1);
+  //  myMotor1->Run(myMotor1,0.01f);
   
   }
   /* USER CODE END 3 */
@@ -322,9 +334,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 7;
+  htim2.Init.Prescaler = 9;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 999;
+  htim2.Init.Period = 41249;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -336,7 +348,7 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
@@ -364,7 +376,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 921600;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
