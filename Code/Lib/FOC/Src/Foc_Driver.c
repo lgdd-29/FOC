@@ -1,6 +1,7 @@
 #include "stm32f407xx.h"
 #include "Foc_Driver.h"
 #include "Math_lib.h"
+#include "stm32f4xx_hal.h"
 #include "string.h"
 #include "foc_typeds.h"
 #include "stdlib.h"
@@ -19,23 +20,16 @@ Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
 void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 {
 
-
-    foc_float_t Angle_new;
+    foc_float_t Angle_new=0;
     Angle_new=self->hal.GetAngle();  //获取当前角度
-    foc_float_t Angle_error=self->site.expert-Angle_new;  //期望角度-当前角度
-
-    foc_float_t v_q = self->site.pi.Kp * Angle_error;
-    (v_q)<(-6)?(-6):((v_q)>(6)?(6):(v_q));
 
     // 2. 设置d轴电压为0，q轴电压为Uq
     self->v_dq.x = 0.0f; // Vd
-    self->v_dq.y = v_q;
+    self->v_dq.y = self->site.State_OUT(&self->site,dt,Angle_new);
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
-    Angle_new=Angle_new*7-self->Angle_zero;
-    Normalize_Angle(&Angle_new);
-
 
     // 3. 逆Park变换得到αβ坐标系下的电压
+    Angle_new=Angle_new*7-self->Angle_zero;
     Normalize_Angle(&Angle_new);
     InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
 
@@ -49,6 +43,45 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
     // 5. 设置PWM占空比
     Three_Phase_trim(&v_pwm, 0.0f, 1.0f); // 修剪到0-1范围内
     self->hal.SetPWM(&v_pwm);
+}
+
+void Angle_zero_GET(FOC_Driver_t* self)
+{
+    foc_float_t Angle_new=3*PI/2;
+    self->v_dq.x=0.0f;
+    self->v_dq.y=3.0f;
+    Normalize_Angle(&Angle_new);
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
+
+    // 4. 逆Clarke变换得到三相电压
+    Three_Phase_t v_abc;
+    InvClarke_Transform(&self->v_alpha_beta, &v_abc);
+
+    // 计算PWM占空比
+    Three_Phase_t v_pwm=Get_PWMval(self,&v_abc);
+
+    // 5. 设置PWM占空比
+    Three_Phase_trim(&v_pwm, 0.0f, 1.0f); // 修剪到0-1范围内
+    self->hal.SetPWM(&v_pwm);
+    HAL_Delay(1000);
+    Angle_new=self->hal.GetAngle()*self->pole_pairs;
+    Normalize_Angle(&Angle_new);
+    self->Angle_zero=Angle_new;
+    FOC_TwoPhase_Init(&self->v_dq);
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
+
+    // 4. 逆Clarke变换得到三相电压
+    InvClarke_Transform(&self->v_alpha_beta, &v_abc);
+
+    // 计算PWM占空比
+     v_pwm=Get_PWMval(self,&v_abc);
+
+    // 5. 设置PWM占空比
+    Three_Phase_trim(&v_pwm, 0.0f, 1.0f); // 修剪到0-1范围内
+    self->hal.SetPWM(&v_pwm);
+
+
+
 }
 
 void FOC_Init_Impl(FOC_Driver_t* self)
@@ -86,6 +119,7 @@ FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_
         driver->Init = FOC_Init_Impl;
         driver->Run = FOC_Run_Impl;
         driver->Site=FOC_Site;
+        driver->Angle_zero_GET=Angle_zero_GET;
 
         //内部函数映射
         State_Create(&driver->site);

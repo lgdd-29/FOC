@@ -2,7 +2,7 @@
 #define _MATH_LIB_H_
 #include "foc_typeds.h"
 #define PI 3.14159265358979f
-
+#define _constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 typedef struct{
     foc_float_t sin;
     foc_float_t cos;   

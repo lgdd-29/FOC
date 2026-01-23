@@ -30,7 +30,7 @@ struct State_Driver_t
     foc_float_t now;
     foc_float_t expert;
 
-    foc_float_t (*State_OUT)(State_Driver_t* self,foc_float_t dt);
+    foc_float_t (*State_OUT)(State_Driver_t* self,foc_float_t dt,foc_float_t Angle_now);
     void (*State_Init)(State_Driver_t* self);
 };
 

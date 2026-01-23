@@ -68,16 +68,6 @@ foc_float_t MyEncoderGetFunc(void)
     return (myas5600->GetAngle(myas5600));
 }
 
-void Angle_zero_GET(FOC_Driver_t* self)
-{
-  self->Site(myMotor1,3*PI/2,10.0f,0.0f);
-  self->Run(myMotor1,0.01f);
-  HAL_Delay(1000);
-  self->Angle_zero=myas5600->AS5600_Calibrarion(myas5600);  
-  self->Site(myMotor1,3*PI/2,0.0f,0.01f);
-  self->Run(myMotor1,0.01f);
-  
-}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,8 +98,7 @@ int main(void)
   //PARA FOC驱动接口
     FOC_HAL_t myMotor1_HAL={
     .SetPWM=MyPwmSetFunc,
-    .GetAngle=MyEncoderGetFunc,
-    .Angle_zero_GET=Angle_zero_GET
+    .GetAngle=MyEncoderGetFunc
   };
   myMotor1=FOC_Create(7, 12, myMotor1_HAL);
   //PARA AS5600驱动接口
@@ -159,10 +148,10 @@ int main(void)
   myas5600->Init(myas5600);
 
   //校准
-  myMotor1->hal.Angle_zero_GET(myMotor1);
+  myMotor1->Angle_zero_GET(myMotor1);
 
   //PARA 位置环kp,ki
-  myMotor1->Site(myMotor1,PI/2,1.0f,0.0f);
+  myMotor1->Site(myMotor1,PI,1.0f,0.0f);
   //TODO while 
   while (1)
   {
@@ -170,10 +159,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-  float angle_test;
+  /*float angle_test;
   angle_test=myas5600->GetAngle(myas5600);
   Normalize_Angle(&angle_test);
-  Float_send(&angle_test,&huart1);
+  Float_send(&angle_test,&huart1);*/
   myMotor1->Run(myMotor1,0.01f);
   
   }

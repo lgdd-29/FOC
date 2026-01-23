@@ -12,7 +12,6 @@ typedef struct
 {  
     void (*SetPWM)(Three_Phase_t* duty);
     foc_float_t (*GetAngle)(void);
-    void (*Angle_zero_GET)(FOC_Driver_t* self);
 }FOC_HAL_t;
 
 struct FOC_Driver_t
@@ -35,6 +34,7 @@ struct FOC_Driver_t
     void (*Init)(FOC_Driver_t* self);  
     void (*Run)(FOC_Driver_t* self,foc_float_t dt);
     void (*Site)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
+    void (*Angle_zero_GET)(FOC_Driver_t* self);
 };
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal);
 

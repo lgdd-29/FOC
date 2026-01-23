@@ -2,6 +2,7 @@
 #include "stm32f407xx.h"
 #include "PI.h"
 #include "stdlib.h"
+#include "Math_lib.h"
 
 //FUN PI_OUT
 foc_float_t PI_OUT(PI_Driver_t* self,foc_float_t error,foc_float_t dt)
@@ -51,20 +52,20 @@ void PI_Init(PI_Driver_t* self)
 
 
 
-foc_float_t State_OUT(State_Driver_t* self,foc_float_t dt)
+foc_float_t State_OUT(State_Driver_t* self,foc_float_t dt,foc_float_t Angle_now)
 {
-    foc_float_t error = self->expert - self->now;
+    self->now=Angle_now;
+    foc_float_t error = self->expert - Angle_now;
+    if(error>PI) error=error-2*PI;
+    if(error<-PI) error=error+2*PI;
     foc_float_t out=self->pi.PI_OUT(&self->pi,error,dt);
     return out;
 }
 
 void State_Init(State_Driver_t* self)
 {
-    self->pi.integral=0;
-    self->pi.integral_limit=1000.0f;
-    self->pi.Prev_error=0;
-    self->pi.Ki=0;
-    self->pi.Kp=0;
+    self->expert=0;
+    self->now=0;
     self->pi.PI_Init(&self->pi);
 }
 
