@@ -18,6 +18,6 @@ struct MyI2C_Driver_t
     void (*MyI2C_Start)(MyI2C_Driver_t* self);
     void (*MyI2C_Stop)(MyI2C_Driver_t* self);
 };
-MyI2C_Driver_t MyI2C_Create(GPIO_TypeDef* SCL_port,uint16_t SCL_pin,GPIO_TypeDef* SDA_port,uint16_t SDA_pin);
+void MyI2C_Create(MyI2C_Driver_t* self,GPIO_TypeDef* SCL_port,uint16_t SCL_pin,GPIO_TypeDef* SDA_port,uint16_t SDA_pin);
 
 #endif

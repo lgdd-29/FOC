@@ -107,23 +107,23 @@ void MyI2C_Init(MyI2C_Driver_t* self)
     MyI2C_W_SDA(self, 1);
 }
 
-MyI2C_Driver_t MyI2C_Create(GPIO_TypeDef* SCL_port,uint16_t SCL_pin,GPIO_TypeDef* SDA_port,uint16_t SDA_pin)
+void MyI2C_Create(MyI2C_Driver_t* self,GPIO_TypeDef* SCL_port,uint16_t SCL_pin,GPIO_TypeDef* SDA_port,uint16_t SDA_pin)
 {
-    MyI2C_Driver_t* myi2c=(MyI2C_Driver_t*)malloc(sizeof(MyI2C_Driver_t));
     //引脚分配
-    myi2c->SCL_port = SCL_port;
-    myi2c->SCL_pin = SCL_pin;
-    myi2c->SDA_port = SDA_port;
-    myi2c->SDA_pin = SDA_pin;
+    if(self!=NULL)
+    {
+        self->SCL_port = SCL_port;
+        self->SCL_pin = SCL_pin;
+        self->SDA_port = SDA_port;
+        self->SDA_pin = SDA_pin;
 
-    //函数映射
-    myi2c->MyI2C_Init = MyI2C_Init;
-    myi2c->MyI2C_Send_Byte = MyI2C_Send_Byte;
-    myi2c->MyI2C_Receive_Byte = MyI2C_ReceiveByte;
-    myi2c->MyI2C_SendAck = MyI2C_SendAck;
-    myi2c->MyI2C_ReceiveAck = MyI2C_ReceiveAck;
-    myi2c->MyI2C_Start = MyI2C_Start;
-    myi2c->MyI2C_Stop = MyI2C_Stop;
-
-    return *myi2c;
+        //函数映射
+        self->MyI2C_Init = MyI2C_Init;
+        self->MyI2C_Send_Byte = MyI2C_Send_Byte;
+        self->MyI2C_Receive_Byte = MyI2C_ReceiveByte;
+        self->MyI2C_SendAck = MyI2C_SendAck;
+        self->MyI2C_ReceiveAck = MyI2C_ReceiveAck;
+        self->MyI2C_Start = MyI2C_Start;
+        self->MyI2C_Stop = MyI2C_Stop;
+    }
 }

@@ -21,7 +21,7 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 {
 
     foc_float_t Angle_new=0;
-    Angle_new=self->hal.GetAngle();  //获取当前角度
+    Angle_new=self->myas5600.GetAngle(&self->myas5600);  //获取当前角度
 
     // 2. 设置d轴电压为0，q轴电压为Uq
     self->v_dq.x = 0.0f; // Vd
@@ -29,7 +29,7 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
 
     // 3. 逆Park变换得到αβ坐标系下的电压
-    Angle_new=Angle_new*7-self->Angle_zero;
+    Angle_new=Angle_new*7-self->myas5600.Angle_zero;
     Normalize_Angle(&Angle_new);
     InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
 
@@ -64,9 +64,9 @@ void Angle_zero_GET(FOC_Driver_t* self)
     Three_Phase_trim(&v_pwm, 0.0f, 1.0f); // 修剪到0-1范围内
     self->hal.SetPWM(&v_pwm);
     HAL_Delay(1000);
-    Angle_new=self->hal.GetAngle()*self->pole_pairs;
+    Angle_new=self->myas5600.GetAngle(&self->myas5600)*self->pole_pairs;
     Normalize_Angle(&Angle_new);
-    self->Angle_zero=Angle_new;
+    self->myas5600.Angle_zero=Angle_new;
     FOC_TwoPhase_Init(&self->v_dq);
     InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
 
@@ -86,8 +86,6 @@ void Angle_zero_GET(FOC_Driver_t* self)
 
 void FOC_Init_Impl(FOC_Driver_t* self)
 {
-    // 初始化各个成员变量
-    self->Angle_zero=0;
     // 初始化电压和电流结构体
     FOC_TwoPhase_Init(&self->v_alpha_beta);
     FOC_TwoPhase_Init(&self->v_dq);
@@ -103,6 +101,8 @@ void FOC_Site(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t k
     self->site.pi.Kp=kp;
     self->site.pi.Ki=ki;
 }
+
+
 
 //FUN FOC_Create
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal)

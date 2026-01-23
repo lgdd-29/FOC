@@ -82,11 +82,7 @@ void MyPwmSetFunc(Three_Phase_t* duty)
   __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
   __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
 }
-//PARA 编码器读取函数接口
-foc_float_t MyEncoderGetFunc(void) 
-{
-    return (myas5600->GetAngle(myas5600));
-}
+
 //TODO 定时器中断函数
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
@@ -110,13 +106,12 @@ int main(void)
 
   //PARA FOC驱动接口
     FOC_HAL_t myMotor1_HAL={
-    .SetPWM=MyPwmSetFunc,
-    .GetAngle=MyEncoderGetFunc
+    .SetPWM=MyPwmSetFunc
   };
   myMotor1=FOC_Create(7, 12, myMotor1_HAL);
   //PARA AS5600驱动接口
-  myi2c=MyI2C_Create(GPIOD,GPIO_PIN_0, GPIOD, GPIO_PIN_1);
-  myas5600=AS5600_Create(&myi2c,0x01,0x00,0x0C,0x0D,0x36);
+  AS5600_Create(&myMotor1->myas5600,0x01,0x00,0x0C,0x0D,0x36);
+  MyI2C_Create(&myMotor1->myas5600.i2c,GPIOD,GPIO_PIN_0, GPIOD, GPIO_PIN_1);
   
   
   /* USER CODE END 1 */
@@ -161,7 +156,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   //TODO 初始化 
   myMotor1->Init(myMotor1);
-  myas5600->Init(myas5600);
+  myMotor1->myas5600.Init(&myMotor1->myas5600);
 
   //TODO 校准代码
   myMotor1->Angle_zero_GET(myMotor1);
