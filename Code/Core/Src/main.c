@@ -31,6 +31,7 @@
 #include "Upper.h"
 #include "AS5600.h"
 #include "MyI2C.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -167,6 +168,7 @@ int main(void)
 
   //PARA 位置环kp,ki
   myMotor1->Site(myMotor1,PI,1.0f,0.0f);
+  myMotor1->Run(myMotor1,0.01);
 
   HAL_TIM_Base_Start_IT(&htim2);
 

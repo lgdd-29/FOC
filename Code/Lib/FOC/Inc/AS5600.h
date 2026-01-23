@@ -20,6 +20,7 @@ struct AS5600_Driver_t
     //函数映射
     void (*Init)(AS5600_Driver_t* self);
     float (*GetAngle)(AS5600_Driver_t* self);
+    float (*GetSpeed)(AS5600_Driver_t* self);
 };
 
 AS5600_Driver_t* AS5600_Create(MyI2C_Driver_t* i2c,uint8_t READ_OP,uint8_t WRITE_OP,uint8_t ANGLE_1_OP,uint8_t ANGLE_2_OP,uint8_t AS5600_ADDRESS);

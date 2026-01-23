@@ -48,6 +48,17 @@ float AS5600_READ(AS5600_Driver_t* self)
     return (foc_float_t)Angle*2*PI/4096.0f;
 }
 
+foc_float_t AS5600_GetSpped(AS5600_Driver_t* self)
+{
+    static foc_float_t Angle_now=0;
+    static foc_float_t Angle_last=0;
+    Angle_last=Angle_now;
+    
+    Angle_now=self->GetAngle(self);
+
+
+
+}
 
 AS5600_Driver_t* AS5600_Create(MyI2C_Driver_t* i2c,uint8_t READ_OP,uint8_t WRITE_OP,uint8_t ANGLE_1_OP,uint8_t ANGLE_2_OP,uint8_t AS5600_ADDRESS)
 {
@@ -67,6 +78,7 @@ AS5600_Driver_t* AS5600_Create(MyI2C_Driver_t* i2c,uint8_t READ_OP,uint8_t WRITE
         //函数映射
         driver->Init = AS5600_Init;
         driver->GetAngle = AS5600_READ;
+        driver->GetSpeed=AS5600_GetSpped;
     }
     return driver;
 }
