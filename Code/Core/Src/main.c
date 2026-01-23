@@ -81,7 +81,7 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-//TODO main
+
 
 /* USER CODE END 0 */
 
@@ -93,7 +93,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  //TODO main
 
   //PARA FOC驱动接口
     FOC_HAL_t myMotor1_HAL={
@@ -144,14 +144,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  //TODO 初始化 
   myMotor1->Init(myMotor1);
   myas5600->Init(myas5600);
 
-  //校准
+  //TODO 校准代码
   myMotor1->Angle_zero_GET(myMotor1);
 
   //PARA 位置环kp,ki
-  myMotor1->Site(myMotor1,PI,1.0f,0.0f);
+  myMotor1->Site(myMotor1,0,1.0f,0.0f);
   //TODO while 
   while (1)
   {

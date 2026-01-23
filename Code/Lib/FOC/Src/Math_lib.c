@@ -8,12 +8,12 @@ void Clarke_Transform(Three_Phase_t *in, Two_Phase_t *out)
     out->y=sqrt(3.0f)*(2*in->b+in->a);
 }
 
-//BUG 这里的+6看一下有没有更好的办法平替
+
 void InvClarke_Transform(Two_Phase_t* in, Three_Phase_t* out)
 {
-    out->a = in->x+6;
-    out->b = (-0.5f * in->x + 0.86602540378f * in->y)+6; // (-x/2 + y*sqrt(3)/2)
-    out->c = (-0.5f * in->x - 0.86602540378f * in->y)+6; // (-x/2 - y*sqrt(3)/2)
+    out->a = in->x;
+    out->b = (-0.5f * in->x + 0.86602540378f * in->y); // (-x/2 + y*sqrt(3)/2)
+    out->c = (-0.5f * in->x - 0.86602540378f * in->y); // (-x/2 - y*sqrt(3)/2)
 }
 
 void Park_Transform(Two_Phase_t *in, Two_Phase_t *out, foc_float_t angle_rad)
