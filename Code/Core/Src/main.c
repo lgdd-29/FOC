@@ -162,20 +162,19 @@ int main(void)
   myMotor1->Angle_zero_GET(myMotor1);
 
   //PARA 位置环kp,ki
-  myMotor1->Site(myMotor1,PI,1.0f,0.0f);
+  myMotor1->Site(myMotor1,0,0.0f,0.0f);
   myMotor1->Run(myMotor1,0.01);
 
   HAL_TIM_Base_Start_IT(&htim2);
-
+  
   //TODO while 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
   float angle_test;
-  angle_test=myMotor1->site.now;
+  angle_test=myMotor1->myas5600.GetSpeed(&myMotor1->myas5600,0.01);
   Float_send(&angle_test,&huart1);
   //  myMotor1->Run(myMotor1,0.01f);
   

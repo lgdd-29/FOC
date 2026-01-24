@@ -20,18 +20,19 @@ Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
 void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 {
 
-    foc_float_t Angle_new=0;
-    Angle_new=self->myas5600.GetAngle(&self->myas5600);  //获取当前角度
+    foc_float_t Angle_now=0;
+    self->myas5600.Angle_now=self->myas5600.GetAngle(&self->myas5600);  //获取当前角度
 
+    self->site.now=self->myas5600.Angle_now;
     // 2. 设置d轴电压为0，q轴电压为Uq
     self->v_dq.x = 0.0f; // Vd
-    self->v_dq.y = self->site.State_OUT(&self->site,dt,Angle_new);
+    self->v_dq.y = self->site.State_OUT(&self->site,dt,self->myas5600.Angle_now);
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
 
     // 3. 逆Park变换得到αβ坐标系下的电压
-    Angle_new=Angle_new*7-self->myas5600.Angle_zero;
-    Normalize_Angle(&Angle_new);
-    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
+    Angle_now=self->myas5600.Angle_now*7-self->myas5600.Angle_zero;
+    Normalize_Angle(&Angle_now);
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_now);
 
     // 4. 逆Clarke变换得到三相电压
     Three_Phase_t v_abc;
@@ -47,11 +48,11 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 
 void Angle_zero_GET(FOC_Driver_t* self)
 {
-    foc_float_t Angle_new=3*PI/2;
+    foc_float_t Angle_now=3*PI/2;
     self->v_dq.x=0.0f;
     self->v_dq.y=3.0f;
-    Normalize_Angle(&Angle_new);
-    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
+    Normalize_Angle(&Angle_now);
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_now);
 
     // 4. 逆Clarke变换得到三相电压
     Three_Phase_t v_abc;
@@ -64,11 +65,11 @@ void Angle_zero_GET(FOC_Driver_t* self)
     Three_Phase_trim(&v_pwm, 0.0f, 1.0f); // 修剪到0-1范围内
     self->hal.SetPWM(&v_pwm);
     HAL_Delay(1000);
-    Angle_new=self->myas5600.GetAngle(&self->myas5600)*self->pole_pairs;
-    Normalize_Angle(&Angle_new);
-    self->myas5600.Angle_zero=Angle_new;
+    Angle_now=self->myas5600.GetAngle(&self->myas5600)*self->pole_pairs;
+    Normalize_Angle(&Angle_now);
+    self->myas5600.Angle_zero=Angle_now;
     FOC_TwoPhase_Init(&self->v_dq);
-    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_new);
+    InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_now);
 
     // 4. 逆Clarke变换得到三相电压
     InvClarke_Transform(&self->v_alpha_beta, &v_abc);

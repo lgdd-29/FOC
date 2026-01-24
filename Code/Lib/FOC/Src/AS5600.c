@@ -8,6 +8,12 @@
 
 void AS5600_Init(AS5600_Driver_t* self)
 {
+    self->Angle_now=0;
+    self->Angle_last=0;
+    self->Angle_zero=0;
+    self->Angle_turns=0;
+    self->Angle_Spped=0;
+    self->Speed_Filtered=0;
     self->i2c.MyI2C_Init(&self->i2c);
 }
 
@@ -48,15 +54,27 @@ float AS5600_READ(AS5600_Driver_t* self)
     return (foc_float_t)Angle*2*PI/4096.0f;
 }
 
-foc_float_t AS5600_GetSpped(AS5600_Driver_t* self)
+float AS5600_GetTurns(AS5600_Driver_t* self)
 {
-    static foc_float_t Angle_now=0;
-    static foc_float_t Angle_last=0;
-    Angle_last=Angle_now;
     
-    Angle_now=self->GetAngle(self);
     return 0;
+}
 
+foc_float_t AS5600_GetSpped(AS5600_Driver_t* self,foc_float_t dt)
+{
+    if(dt<=0)   return 0;
+    foc_float_t delta=self->Angle_now-self->Angle_last;
+    if(delta>PI)
+    {
+        delta-=2*PI;
+    }
+    else if (delta<-PI) {
+        delta+=2*PI;
+    }
+    self->Angle_last=self->Angle_now;
+    self->Speed_Filtered=(delta)/dt;
+    self->Angle_Spped=0.9*self->Angle_Spped+0.1*self->Speed_Filtered;
+    return self->Angle_Spped;
 
 }
 
@@ -75,6 +93,7 @@ void AS5600_Create(AS5600_Driver_t* self,uint8_t READ_OP,uint8_t WRITE_OP,uint8_
         self->Init = AS5600_Init;
         self->GetAngle = AS5600_READ;
         self->GetSpeed=AS5600_GetSpped;
+        self->GetTurns=AS5600_GetTurns;
 
     }
 }
