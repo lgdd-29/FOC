@@ -45,8 +45,8 @@ void PI_Init(PI_Driver_t* self)
 {
     self->Kp = 0;
     self->Ki = 0;   
-    self->integral_limit = 6.0f; // 默认积分限幅值
-    self->output_limit = 6.0f;   // 默认输出限幅值
+    self->integral_limit = 12.0f; // 默认积分限幅值
+    self->output_limit = 12.0f;   // 默认输出限幅值
     self->integral = 0.0f;
     self->Prev_error = 0.0f;
 }
@@ -56,7 +56,7 @@ void PI_Init(PI_Driver_t* self)
 foc_float_t State_OUT(State_Driver_t* self,foc_float_t dt,foc_float_t Angle_now)
 {
     self->now=Angle_now;
-    foc_float_t error = self->expert - Angle_now;
+    foc_float_t error = self->expert - self->now;
     if(error>PI) error=error-2*PI;
     if(error<-PI) error=error+2*PI;
     foc_float_t out=self->pi.PI_OUT(&self->pi,error,dt);
@@ -69,6 +69,25 @@ void State_Init(State_Driver_t* self)
     self->now=0;
     self->pi.PI_Init(&self->pi);
 }
+
+
+void Speed_Init(Speed_Driver_t* self)
+{
+    self->expert=0;
+    self->now=0;
+    self->pi.PI_Init(&self->pi);
+}
+
+foc_float_t Speed_OUT(Speed_Driver_t* self,foc_float_t dt,foc_float_t Speed_now)
+{
+    self->now=Speed_now;
+    foc_float_t error=self->expert-self->now;
+    _constrain(error,-3,3);
+    foc_float_t out=self->pi.PI_OUT(&self->pi,error,dt);
+
+    return out;
+}
+
 
 //FUN PI_Create
 void PI_Create(PI_Driver_t* self)
@@ -84,5 +103,12 @@ void State_Create(State_Driver_t* self)
     self->State_OUT=State_OUT;
     self->State_Init=State_Init;
 
+    PI_Create(&self->pi);
+}
+
+void Speed_Create(Speed_Driver_t *self)
+{
+    self->Speed_Init=Speed_Init;
+    self->Speed_OUT=Speed_OUT;
     PI_Create(&self->pi);
 }

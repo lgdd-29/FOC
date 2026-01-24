@@ -20,6 +20,7 @@ struct FOC_Driver_t
     FOC_HAL_t hal;
 
     State_Driver_t site;
+    Speed_Driver_t speed;
 
     foc_float_t pole_pairs;
     foc_float_t voltage_limit;
@@ -34,6 +35,7 @@ struct FOC_Driver_t
     void (*Init)(FOC_Driver_t* self);  
     void (*Run)(FOC_Driver_t* self,foc_float_t dt);
     void (*Site)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
+    void (*Speed)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
     void (*Angle_zero_GET)(FOC_Driver_t* self);
 
 };

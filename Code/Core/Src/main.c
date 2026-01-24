@@ -166,7 +166,7 @@ int main(void)
   myMotor1->Run(myMotor1,0.01);
 
   HAL_TIM_Base_Start_IT(&htim2);
-  
+  myMotor1->Speed(myMotor1,2,0.3,0.01);
   //TODO while 
   while (1)
   {
