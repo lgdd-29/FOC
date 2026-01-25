@@ -85,6 +85,34 @@ void Angle_zero_GET(FOC_Driver_t* self)
 
 }
 
+void Current_Calibration(FOC_Driver_t* self,ADC_HandleTypeDef *adc1,ADC_HandleTypeDef *adc2)
+{
+    uint32_t u_sum = 0, w_sum = 0;
+    uint16_t i;
+    // 4. 循环256次采样
+    for (i = 0; i < 256; i++)
+    {
+        // 触发ADC注入转换（外部触发模式）
+        HAL_ADCEx_InjectedStart(adc1);
+        
+        // 等待注入转换结束（检查JEOC标志）
+        while (!__HAL_ADC_GET_FLAG(adc1, ADC_FLAG_JEOC));
+        
+        // 读取注入通道的转换值并累加
+        u_sum += HAL_ADCEx_InjectedGetValue(adc1, ADC_INJECTED_RANK_1);
+        w_sum += HAL_ADCEx_InjectedGetValue(adc2, ADC_INJECTED_RANK_3);
+        
+        // 清除JEOC标志（避免标志持续置位）
+        __HAL_ADC_CLEAR_FLAG(adc1, ADC_FLAG_JEOC);
+    }
+    
+    // 5. 计算偏移量（256次采样取平均，右移8位相当于除以256）
+    self->I_abc_offset.a = u_sum >> 8;
+    self->I_abc_offset.c = w_sum >> 8;
+    self->I_abc_offset.b=-(self->I_abc_offset.a+self->I_abc_offset.c);
+}
+
+
 void FOC_Init_Impl(FOC_Driver_t* self)
 {
     // 初始化电压和电流结构体
@@ -131,6 +159,7 @@ FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_
         driver->Site=FOC_Site;
         driver->Speed=FOC_Speed;
         driver->Angle_zero_GET=Angle_zero_GET;
+        driver->Current_Calibration=Current_Calibration;
 
 
         //内部函数映射

@@ -40,6 +40,7 @@ struct FOC_Driver_t
     void (*Site)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
     void (*Speed)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
     void (*Angle_zero_GET)(FOC_Driver_t* self);
+    void (*Current_Calibration)(FOC_Driver_t* self,ADC_HandleTypeDef* adc1,ADC_HandleTypeDef* adc2)
 
 };
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal);

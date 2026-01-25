@@ -191,6 +191,7 @@ int main(void)
 
   // TODO ADC初始化
   HAL_ADC_Init(&hadc1);
+  myMotor1->Current_Calibration(myMotor1,&hadc1,&hadc2);
   HAL_ADCEx_InjectedStart(&hadc1);
   HAL_ADCEx_InjectedStart_IT(&hadc1);
 
