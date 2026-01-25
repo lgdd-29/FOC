@@ -94,6 +94,9 @@ void FOC_Init_Impl(FOC_Driver_t* self)
     FOC_TwoPhase_Init(&self->v_dq);
     FOC_TwoPhase_Init(&self->I_alpha_beta);
     FOC_TwoPhase_Init(&self->I_dq);
+    FOC_ThreePhase_Init(&self->I_abc);
+    FOC_ThreePhase_Init(&self->I_abc_offset);
+    FOC_ThreePhase_Init(&self->I_abc_ture);
     self->site.State_Init(&self->site);
     self->speed.Speed_Init(&self->speed);
     

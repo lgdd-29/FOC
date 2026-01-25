@@ -25,6 +25,9 @@ struct FOC_Driver_t
     foc_float_t pole_pairs;
     foc_float_t voltage_limit;
 
+    Three_Phase_t I_abc;
+    Three_Phase_t I_abc_offset;
+    Three_Phase_t I_abc_ture;
 
     Two_Phase_t v_alpha_beta;
     Two_Phase_t v_dq;
