@@ -133,6 +133,10 @@ int main(void)
   AS5600_Create(&myMotor1->myas5600,0x01,0x00,0x0C,0x0D,0x36);
   MyI2C_Create(&myMotor1->myas5600.i2c,GPIOD,GPIO_PIN_0, GPIOD, GPIO_PIN_1);
   
+    //TODO 电机驱动初始化 
+  myMotor1->Init(myMotor1);
+  myMotor1->myas5600.Init(&myMotor1->myas5600);
+
   
   /* USER CODE END 1 */
 
@@ -184,9 +188,6 @@ int main(void)
   HAL_ADC_Init(&hadc1);
   HAL_ADCEx_InjectedStart(&hadc1);
   HAL_ADCEx_InjectedStart_IT(&hadc1);
-  //TODO 电机驱动初始化 
-  myMotor1->Init(myMotor1);
-  myMotor1->myas5600.Init(&myMotor1->myas5600);
 
   //TODO 校准代码
   myMotor1->Angle_zero_GET(myMotor1);
