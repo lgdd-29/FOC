@@ -83,8 +83,6 @@ void Angle_zero_GET(FOC_Driver_t* self)
     Three_Phase_trim(&v_pwm, 0.0f, 1.0f); // 修剪到0-1范围内
     self->hal.SetPWM(&v_pwm);
 
-
-
 }
 
 void FOC_Init_Impl(FOC_Driver_t* self)

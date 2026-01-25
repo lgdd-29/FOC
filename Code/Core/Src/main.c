@@ -185,13 +185,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  //TODO 校准代码
+  myMotor1->Angle_zero_GET(myMotor1);
+
   // TODO ADC初始化
   HAL_ADC_Init(&hadc1);
   HAL_ADCEx_InjectedStart(&hadc1);
   HAL_ADCEx_InjectedStart_IT(&hadc1);
-
-  //TODO 校准代码
-  myMotor1->Angle_zero_GET(myMotor1);
 
   //PARA 位置环kp,ki
   myMotor1->Site(myMotor1,0,0.0f,0.0f);
