@@ -105,9 +105,10 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
   /* 判断是否是ADC1 */
   if(hadc->Instance == ADC1)
   {
-
-
-
+    //获取电流
+    myMotor1->I_abc.a=HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
+    myMotor1->I_abc.c=HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
+    myMotor1->I_abc.b=-(myMotor1->I_abc.a+myMotor1->I_abc.c);
   }
 }
 
