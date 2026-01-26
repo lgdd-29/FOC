@@ -214,7 +214,7 @@ int main(void)
   //定时器2中断使能
   HAL_TIM_Base_Start_IT(&htim2);
    //PARA 速度环参数
-  myMotor1->Speed(myMotor1,2,3,0.03);
+  myMotor1->Speed(myMotor1,4,3,0.03);
   //TODO while 
   while (1)
   {
