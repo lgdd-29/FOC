@@ -52,7 +52,7 @@ void Angle_zero_GET(FOC_Driver_t* self)
 {
     foc_float_t Angle_now=3*PI/2;
     self->v_dq.x=0.0f;
-    self->v_dq.y=3.0f;
+    self->v_dq.y=2.0f;
     Normalize_Angle(&Angle_now);
     InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_now);
 
@@ -94,22 +94,23 @@ void Current_Calibration(FOC_Driver_t* self,ADC_HandleTypeDef *adc1,ADC_HandleTy
     {
         // 触发ADC注入转换（外部触发模式）
         HAL_ADCEx_InjectedStart(adc1);
+        HAL_ADCEx_InjectedStart(adc2);
         
         // 等待注入转换结束（检查JEOC标志）
         while (!__HAL_ADC_GET_FLAG(adc1, ADC_FLAG_JEOC));
         
         // 读取注入通道的转换值并累加
         u_sum += HAL_ADCEx_InjectedGetValue(adc1, ADC_INJECTED_RANK_1);
-        w_sum += HAL_ADCEx_InjectedGetValue(adc2, ADC_INJECTED_RANK_3);
+        w_sum += HAL_ADCEx_InjectedGetValue(adc2, ADC_INJECTED_RANK_1);
         
         // 清除JEOC标志（避免标志持续置位）
         __HAL_ADC_CLEAR_FLAG(adc1, ADC_FLAG_JEOC);
+        __HAL_ADC_CLEAR_FLAG(adc2, ADC_FLAG_JEOC);
     }
     
     // 5. 计算偏移量（256次采样取平均，右移8位相当于除以256）
     self->I_abc_offset.a = u_sum >> 8;
     self->I_abc_offset.c = w_sum >> 8;
-    self->I_abc_offset.b=-(self->I_abc_offset.a+self->I_abc_offset.c);
 }
 
 

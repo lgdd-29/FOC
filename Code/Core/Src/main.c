@@ -24,8 +24,10 @@
 #include "Math_lib.h"
 #include "foc_typeds.h"
 #include "Foc_Driver.h"
+#include "stm32f407xx.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_adc.h"
+#include "stm32f4xx_hal_adc_ex.h"
 #include "stm32f4xx_hal_def.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_tim.h"
@@ -109,8 +111,11 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
     //获取电流
     myMotor1->I_abc.a=HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
     myMotor1->I_abc.c=HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
-    myMotor1->I_abc.b=-(myMotor1->I_abc.a+myMotor1->I_abc.c);
+    myMotor1->I_abc_ture.a=(myMotor1->I_abc.a-myMotor1->I_abc_offset.a)*3.3*50/(4095*4.02);
+    myMotor1->I_abc_ture.c=(myMotor1->I_abc.c-myMotor1->I_abc_offset.c)*3.3*50/(4095*4.02);
+    myMotor1->I_abc_ture.b=-(myMotor1->I_abc_ture.a+myMotor1->I_abc_ture.c);
     myMotor1->Run(myMotor1,0.005f);
+  
   }
 }
 
@@ -193,9 +198,14 @@ int main(void)
 
   // TODO ADC初始化
   HAL_ADC_Init(&hadc1);
+  HAL_ADC_Init(&hadc2);
+  //TODO 电流偏置
   myMotor1->Current_Calibration(myMotor1,&hadc1,&hadc2);
+  //TODO ADC中断使能
   HAL_ADCEx_InjectedStart(&hadc1);
+  HAL_ADCEx_InjectedStart(&hadc2);
   HAL_ADCEx_InjectedStart_IT(&hadc1);
+  HAL_ADCEx_InjectedStart_IT(&hadc2);
 
   //PARA 位置环参数
   myMotor1->Site(myMotor1,0,0.0f,0.0f);
@@ -211,9 +221,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  float angle_test;
+  /*float angle_test;
   angle_test=myMotor1->myas5600.Angle_Spped;
-  Float_send(&angle_test,&huart1);
+  Float_send(&angle_test,&huart1);*/
+  float I[3];
+  I[0]=myMotor1->I_abc_ture.a;
+  I[1]=myMotor1->I_abc_ture.b;
+  I[2]=myMotor1->I_abc_ture.c;
+  Float_send(I,&huart1);
   //  myMotor1->Run(myMotor1,0.01f);
   
   }
