@@ -23,11 +23,11 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 
     foc_float_t Angle_now=0;
     self->myas5600.Angle_now=self->myas5600.GetAngle(&self->myas5600);  //获取当前角度
-
+    self->myas5600.Angle_Spped=self->myas5600.GetSpeed(&self->myas5600,dt);  //获取当前速度
     self->site.now=self->myas5600.Angle_now;
     // 2. 设置d轴电压为0，q轴电压为Uq
     self->v_dq.x = 0.0f; // Vd
-    self->v_dq.y = self->speed.Speed_OUT(&self->speed,dt,self->myas5600.Angle_Spped);
+    self->v_dq.y = self->speed.out;
     //self->v_dq.y = self->site.State_OUT(&self->site,dt,self->myas5600.Angle_now);
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
 

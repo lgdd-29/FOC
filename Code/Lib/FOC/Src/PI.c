@@ -53,39 +53,38 @@ void PI_Init(PI_Driver_t* self)
 
 
 
-foc_float_t State_OUT(State_Driver_t* self,foc_float_t dt,foc_float_t Angle_now)
+void State_OUT(State_Driver_t* self,foc_float_t dt,foc_float_t Angle_now)
 {
     self->now=Angle_now;
     foc_float_t error = self->expert - self->now;
     if(error>PI) error=error-2*PI;
     if(error<-PI) error=error+2*PI;
-    foc_float_t out=self->pi.PI_OUT(&self->pi,error,dt);
-    return out;
+    self->out=self->pi.PI_OUT(&self->pi,error,dt);
 }
-
+//FUN State_Init
 void State_Init(State_Driver_t* self)
 {
     self->expert=0;
     self->now=0;
+    self->out=0;
     self->pi.PI_Init(&self->pi);
 }
 
-
+//FUN Speed_Init
 void Speed_Init(Speed_Driver_t* self)
 {
     self->expert=0;
     self->now=0;
+    self->out=0;
     self->pi.PI_Init(&self->pi);
 }
-
-foc_float_t Speed_OUT(Speed_Driver_t* self,foc_float_t dt,foc_float_t Speed_now)
+//FUN Speed_OUT
+void Speed_OUT(Speed_Driver_t* self,foc_float_t dt,foc_float_t Speed_now)
 {
     self->now=Speed_now;
     foc_float_t error=self->expert-self->now;
-    _constrain(error,-3,3);
-    foc_float_t out=self->pi.PI_OUT(&self->pi,error,dt);
-
-    return out;
+    _constrain(error,-5,5);
+    self->out=self->pi.PI_OUT(&self->pi,error,dt);
 }
 
 

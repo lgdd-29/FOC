@@ -30,8 +30,9 @@ struct State_Driver_t
     PI_Driver_t pi;
     foc_float_t now;
     foc_float_t expert;
+    foc_float_t out;
 
-    foc_float_t (*State_OUT)(State_Driver_t* self,foc_float_t dt,foc_float_t Angle_now);
+    void (*State_OUT)(State_Driver_t* self,foc_float_t dt,foc_float_t Angle_now);
     void (*State_Init)(State_Driver_t* self);
 };
 
@@ -41,8 +42,9 @@ struct Speed_Driver_t
     PI_Driver_t pi;
     foc_float_t now;
     foc_float_t expert;
+    foc_float_t out;
 
-    foc_float_t (*Speed_OUT)(Speed_Driver_t* self,foc_float_t dt,foc_float_t Speed_now);
+    void (*Speed_OUT)(Speed_Driver_t* self,foc_float_t dt,foc_float_t Speed_now);
     void (*Speed_Init)(Speed_Driver_t* self);
 };
 

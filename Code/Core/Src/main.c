@@ -88,6 +88,7 @@ void MyPwmSetFunc(Three_Phase_t* duty)
   __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, (uint32_t)(duty->a * (htim1.Init.Period+1)));
   __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty->b * (htim1.Init.Period+1)));
   __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(duty->c * (htim1.Init.Period+1)));
+
 }
 
 //TODO 定时器中断函数
@@ -95,11 +96,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if(htim==&htim2)
   {
-      myMotor1->Run(myMotor1,0.05f);
+      myMotor1->speed.Speed_OUT(&myMotor1->speed,0.01,myMotor1->myas5600.Angle_Spped);
   }
 }
 
-
+//TODO ADC中断
 void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
   /* 判断是否是ADC1 */
@@ -109,6 +110,7 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
     myMotor1->I_abc.a=HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
     myMotor1->I_abc.c=HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
     myMotor1->I_abc.b=-(myMotor1->I_abc.a+myMotor1->I_abc.c);
+    myMotor1->Run(myMotor1,0.005f);
   }
 }
 
@@ -195,12 +197,14 @@ int main(void)
   HAL_ADCEx_InjectedStart(&hadc1);
   HAL_ADCEx_InjectedStart_IT(&hadc1);
 
-  //PARA 位置环kp,ki
+  //PARA 位置环参数
   myMotor1->Site(myMotor1,0,0.0f,0.0f);
+ 
   myMotor1->Run(myMotor1,0.01);
   //定时器2中断使能
   HAL_TIM_Base_Start_IT(&htim2);
-  myMotor1->Speed(myMotor1,2,0.3,0.01);
+   //PARA 速度环参数
+  myMotor1->Speed(myMotor1,2,3,0.03);
   //TODO while 
   while (1)
   {
@@ -208,7 +212,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   float angle_test;
-  angle_test=myMotor1->myas5600.GetSpeed(&myMotor1->myas5600,0.01);
+  angle_test=myMotor1->myas5600.Angle_Spped;
   Float_send(&angle_test,&huart1);
   //  myMotor1->Run(myMotor1,0.01f);
   
