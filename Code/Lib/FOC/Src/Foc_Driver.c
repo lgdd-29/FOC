@@ -27,7 +27,7 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
     self->site.now=self->myas5600.Angle_now;
 
     //获得当前角度
-    Angle_now=self->myas5600.Angle_now*7-self->myas5600.Angle_zero;
+    Angle_now=self->myas5600.Angle_now*self->pole_pairs-self->myas5600.Angle_zero;
     //Ia,Ib,Ic转换为Iq,Id
     Clarke_Transform(&self->I_abc_ture, &self->I_alpha_beta);
     Park_Transform(&self->I_alpha_beta, &self->I_dq, Angle_now);
