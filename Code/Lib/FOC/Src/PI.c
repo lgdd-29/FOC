@@ -12,8 +12,7 @@ foc_float_t PI_OUT(PI_Driver_t* self,foc_float_t error,foc_float_t dt)
     // 计算比例项
     foc_float_t P_out = self->Kp * error;
 
-    // 计算积分项
-    self->integral += error * dt*self->Ki;
+
     
     // 积分限幅
     if (self->integral > self->integral_limit)
@@ -31,7 +30,9 @@ foc_float_t PI_OUT(PI_Driver_t* self,foc_float_t error,foc_float_t dt)
         output = self->output_limit;
     else if (output < -self->output_limit)
         output = -self->output_limit;
-
+    else
+        // 计算积分项
+         self->integral += error * dt*self->Ki;
     return output;
 }
 
@@ -46,8 +47,8 @@ void PI_Init(PI_Driver_t* self)
 {
     self->Kp = 0;
     self->Ki = 0;   
-    self->integral_limit = 12.0f; // 默认积分限幅值
-    self->output_limit = 12.0f;   // 默认输出限幅值
+    self->integral_limit = 6.0f; // 默认积分限幅值
+    self->output_limit = 6.0f;   // 默认输出限幅值
     self->integral = 0.0f;
     self->Prev_error = 0.0f;
 }
@@ -105,6 +106,23 @@ foc_float_t ID_OUT(Current_D_Driver_t* self,foc_float_t dt,foc_float_t ID_now)
     return self->out;
 }
 
+//FUN IQ_Init
+void IQ_Init(Current_Q_Driver_t* self)
+{
+    self->expert=0;
+    self->now=0;
+    self->out=0;
+    self->pi.PI_Init(&self->pi);
+}
+
+foc_float_t IQ_OUT(Current_Q_Driver_t* self,foc_float_t dt,foc_float_t IQ_now)
+{
+    self->now=IQ_now;
+    foc_float_t error=self->expert-self->now;
+    _constrain(error, -6, 6);
+    self->out=self->pi.PI_OUT(&self->pi,error,dt);
+    return self->out;
+}
 
 //FUN PI_Create
 void PI_Create(PI_Driver_t* self)
@@ -135,5 +153,13 @@ void ID_Create(Current_D_Driver_t* self)
 {
     self->ID_Init=ID_Init;
     self->ID_OUT=ID_OUT;
+    PI_Create(&self->pi);
+}
+
+//FUN IQ_Create
+void IQ_Create(Current_Q_Driver_t *self)
+{
+    self->IQ_Init=IQ_Init;
+    self->IQ_OUT=IQ_OUT;
     PI_Create(&self->pi);
 }

@@ -22,6 +22,7 @@ struct FOC_Driver_t
     State_Driver_t site;
     Speed_Driver_t speed;
     Current_D_Driver_t Id;
+    Current_Q_Driver_t Iq;
 
     foc_float_t pole_pairs;
     foc_float_t voltage_limit;
@@ -40,7 +41,8 @@ struct FOC_Driver_t
     void (*Run)(FOC_Driver_t* self,foc_float_t dt);
     void (*Site)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
     void (*Speed)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
-    void (*id)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
+    void (*id)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);\
+    void (*iq)(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki);
     void (*Angle_zero_GET)(FOC_Driver_t* self);
     void (*Current_Calibration)(FOC_Driver_t* self,ADC_HandleTypeDef* adc1,ADC_HandleTypeDef* adc2);
 

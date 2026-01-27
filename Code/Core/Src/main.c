@@ -98,7 +98,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if(htim==&htim2)
   {
-      myMotor1->speed.Speed_OUT(&myMotor1->speed,0.01,myMotor1->myas5600.Angle_Spped);
+      //PARA 位置环参数
+    myMotor1->Site(myMotor1,PI,2.5f,0);
+    myMotor1->site.State_OUT(&myMotor1->site,0.01,myMotor1->myas5600.Angle_now);
+    //PARA 速度环参数
+    myMotor1->Speed(myMotor1,myMotor1->site.out,0.1,0.01);
+    myMotor1->speed.Speed_OUT(&myMotor1->speed,0.01,myMotor1->myas5600.Angle_Spped);
+    //PARA 电流环参数
+    myMotor1->id(myMotor1,0.2,0.5,0);
+    myMotor1->iq(myMotor1,myMotor1->speed.out,0.1,0.01f);
   }
 }
 
@@ -109,10 +117,13 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
   if(hadc->Instance == ADC1)
   {
     //获取电流
+    HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_5);
     myMotor1->I_abc.a=HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
     myMotor1->I_abc.b=HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
+    HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_5);
     myMotor1->I_abc_ture.a=(myMotor1->I_abc.a-myMotor1->I_abc_offset.a)*3.3*50/(4095*4.02);
     myMotor1->I_abc_ture.b=(myMotor1->I_abc.b-myMotor1->I_abc_offset.b)*3.3*50/(4095*4.02);
+    myMotor1->I_abc_ture.c=-(myMotor1->I_abc_ture.a+myMotor1->I_abc_ture.b);
     myMotor1->Run(myMotor1,0.005f);
   
   }
@@ -206,16 +217,11 @@ int main(void)
   HAL_ADCEx_InjectedStart_IT(&hadc1);
   HAL_ADCEx_InjectedStart_IT(&hadc2);
 
-  //PARA 位置环参数
-  myMotor1->Site(myMotor1,0,0.0f,0.0f);
- 
-  myMotor1->Run(myMotor1,0.01);
+
+
   //定时器2中断使能
   HAL_TIM_Base_Start_IT(&htim2);
-   //PARA 速度环参数
-  myMotor1->Speed(myMotor1,2,3,0.03);
-  //PARA 电流环参数
-  myMotor1->id(myMotor1,0,0.5,0);
+
   //TODO while 
   while (1)
   {
@@ -226,9 +232,9 @@ int main(void)
   angle_test=myMotor1->myas5600.Angle_Spped;
   Float_send(&angle_test,&huart1);*/  
   float I[3];
-  I[0]=myMotor1->speed.expert;
-  I[1]=myMotor1->speed.now;
-  I[2]=myMotor1->Id.now;
+  I[0]=myMotor1->I_abc_ture.a;
+  I[1]=myMotor1->site.now;
+  I[2]=myMotor1->site.expert;
   Float_send(I,&huart1);
   //  myMotor1->Run(myMotor1,0.01f);
   

@@ -61,10 +61,22 @@ struct Current_D_Driver_t
     void(*ID_Init)(Current_D_Driver_t* self);
 };
 
+//PARA D轴电流环结构体
+struct Current_Q_Driver_t
+{
+    PI_Driver_t pi;
+    foc_float_t now;
+    foc_float_t expert;
+    foc_float_t out;
+    foc_float_t (*IQ_OUT)(Current_Q_Driver_t* self,foc_float_t dt,foc_float_t IQ_now);
+    void(*IQ_Init)(Current_Q_Driver_t* self);
+};
+
 void PI_Create(PI_Driver_t* self);
 void State_Create(State_Driver_t* self);
 void Speed_Create(Speed_Driver_t* self);
 void ID_Create(Current_D_Driver_t* self);
+void IQ_Create(Current_Q_Driver_t* self);
 
 #endif
 

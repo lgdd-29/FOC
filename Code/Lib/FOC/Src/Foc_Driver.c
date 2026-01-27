@@ -34,7 +34,9 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
 
     // 2. 设置d轴电压为0，q轴电压为Uq
     self->v_dq.x = self->Id.ID_OUT(&self->Id,dt,self->I_dq.x); // Vd
-    self->v_dq.y = self->speed.out;
+    self->v_dq.y=self->Iq.IQ_OUT(&self->Iq,dt,self->I_dq.y);
+    //self->v_dq.y = self->speed.out;
+    //self->v_dq.y = self->site.out;
     //self->v_dq.y = self->site.State_OUT(&self->site,dt,self->myas5600.Angle_now);
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
 
@@ -131,8 +133,10 @@ void FOC_Init_Impl(FOC_Driver_t* self)
     FOC_ThreePhase_Init(&self->I_abc_offset);
     FOC_ThreePhase_Init(&self->I_abc_ture);
     self->Id.ID_Init(&self->Id);
+    self->Iq.IQ_Init(&self->Iq);
     self->site.State_Init(&self->site);
     self->speed.Speed_Init(&self->speed);
+
     
 }
 
@@ -154,6 +158,12 @@ void FOC_Id(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki)
     self->Id.pi.Kp=kp;
     self->Id.pi.Ki=ki;
 }
+void FOC_Iq(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki)
+{
+    self->Iq.expert=expert;
+    self->Iq.pi.Kp=kp;
+    self->Iq.pi.Ki=ki;
+}
 
 //FUN FOC_Create
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal)
@@ -174,6 +184,7 @@ FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_
         driver->Site=FOC_Site;
         driver->Speed=FOC_Speed;
         driver->id=FOC_Id;
+        driver->iq=FOC_Iq;
 
         //校准函数映射
         driver->Angle_zero_GET=Angle_zero_GET;
@@ -185,6 +196,7 @@ FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_
         State_Create(&driver->site);
         Speed_Create(&driver->speed);
         ID_Create(&driver->Id);
+        IQ_Create(&driver->Iq);
     }
     return driver;
 }
