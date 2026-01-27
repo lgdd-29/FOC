@@ -3,6 +3,7 @@
 #include "PI.h"
 #include "stdlib.h"
 #include "Math_lib.h"
+#include <math.h>
 
 
 //FUN PI_OUT
@@ -83,8 +84,25 @@ void Speed_OUT(Speed_Driver_t* self,foc_float_t dt,foc_float_t Speed_now)
 {
     self->now=Speed_now;
     foc_float_t error=self->expert-self->now;
-    _constrain(error,-5,5);
+    _constrain(error,-10,10);
     self->out=self->pi.PI_OUT(&self->pi,error,dt);
+}
+//FUN ID_Init
+void ID_Init(Current_D_Driver_t* self)
+{
+    self->expert=0;
+    self->now=0;
+    self->out=0;
+    self->pi.PI_Init(&self->pi);
+}
+
+foc_float_t ID_OUT(Current_D_Driver_t* self,foc_float_t dt,foc_float_t ID_now)
+{
+    self->now=ID_now;
+    foc_float_t error=self->expert-self->now;
+    _constrain(error, -6, 6);
+    self->out=self->pi.PI_OUT(&self->pi,error,dt);
+    return self->out;
 }
 
 
@@ -109,5 +127,13 @@ void Speed_Create(Speed_Driver_t *self)
 {
     self->Speed_Init=Speed_Init;
     self->Speed_OUT=Speed_OUT;
+    PI_Create(&self->pi);
+}
+
+//FUN ID_Create
+void ID_Create(Current_D_Driver_t* self)
+{
+    self->ID_Init=ID_Init;
+    self->ID_OUT=ID_OUT;
     PI_Create(&self->pi);
 }

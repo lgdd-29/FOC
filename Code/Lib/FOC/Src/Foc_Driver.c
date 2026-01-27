@@ -1,10 +1,10 @@
+#include "FOC_typeds.h"
 #include "PI.h"
 #include "stm32f407xx.h"
 #include "Foc_Driver.h"
 #include "Math_lib.h"
 #include "stm32f4xx_hal.h"
 #include "string.h"
-#include "foc_typeds.h"
 #include "stdlib.h"
 
 Three_Phase_t Get_PWMval(FOC_Driver_t* self,Three_Phase_t* abc)
@@ -25,14 +25,20 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
     self->myas5600.Angle_now=self->myas5600.GetAngle(&self->myas5600);  //获取当前角度
     self->myas5600.Angle_Spped=self->myas5600.GetSpeed(&self->myas5600,dt);  //获取当前速度
     self->site.now=self->myas5600.Angle_now;
+
+    //获得当前角度
+    Angle_now=self->myas5600.Angle_now*7-self->myas5600.Angle_zero;
+    //Ia,Ib,Ic转换为Iq,Id
+    Clarke_Transform(&self->I_abc_ture, &self->I_alpha_beta);
+    Park_Transform(&self->I_alpha_beta, &self->I_dq, Angle_now);
+
     // 2. 设置d轴电压为0，q轴电压为Uq
-    self->v_dq.x = 0.0f; // Vd
+    self->v_dq.x = self->Id.ID_OUT(&self->Id,dt,self->I_dq.x); // Vd
     self->v_dq.y = self->speed.out;
     //self->v_dq.y = self->site.State_OUT(&self->site,dt,self->myas5600.Angle_now);
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
 
     // 3. 逆Park变换得到αβ坐标系下的电压
-    Angle_now=self->myas5600.Angle_now*7-self->myas5600.Angle_zero;
     Normalize_Angle(&Angle_now);
     InvPark_Transform(&self->v_dq, &self->v_alpha_beta, Angle_now);
 
@@ -110,7 +116,7 @@ void Current_Calibration(FOC_Driver_t* self,ADC_HandleTypeDef *adc1,ADC_HandleTy
     
     // 5. 计算偏移量（256次采样取平均，右移8位相当于除以256）
     self->I_abc_offset.a = u_sum >> 8;
-    self->I_abc_offset.c = w_sum >> 8;
+    self->I_abc_offset.b = w_sum >> 8;
 }
 
 
@@ -124,6 +130,7 @@ void FOC_Init_Impl(FOC_Driver_t* self)
     FOC_ThreePhase_Init(&self->I_abc);
     FOC_ThreePhase_Init(&self->I_abc_offset);
     FOC_ThreePhase_Init(&self->I_abc_ture);
+    self->Id.ID_Init(&self->Id);
     self->site.State_Init(&self->site);
     self->speed.Speed_Init(&self->speed);
     
@@ -141,7 +148,12 @@ void FOC_Speed(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t 
     self->speed.pi.Kp=kp;
     self->speed.pi.Ki=ki;
 }
-
+void FOC_Id(FOC_Driver_t* self,foc_float_t expert,foc_float_t kp,foc_float_t ki)
+{
+    self->Id.expert=expert;
+    self->Id.pi.Kp=kp;
+    self->Id.pi.Ki=ki;
+}
 
 //FUN FOC_Create
 FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_HAL_t hal)
@@ -157,16 +169,22 @@ FOC_Driver_t* FOC_Create(foc_float_t pole_pairs, foc_float_t voltage_limit, FOC_
         // 绑定函数实现
         driver->Init = FOC_Init_Impl;
         driver->Run = FOC_Run_Impl;
+
+        //调整kp,ki以及目标值的函数映射
         driver->Site=FOC_Site;
         driver->Speed=FOC_Speed;
+        driver->id=FOC_Id;
+
+        //校准函数映射
         driver->Angle_zero_GET=Angle_zero_GET;
         driver->Current_Calibration=Current_Calibration;
+
 
 
         //内部函数映射
         State_Create(&driver->site);
         Speed_Create(&driver->speed);
-
+        ID_Create(&driver->Id);
     }
     return driver;
 }

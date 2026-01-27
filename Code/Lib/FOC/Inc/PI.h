@@ -6,6 +6,8 @@
 typedef struct PI_Driver_t PI_Driver_t;
 typedef struct State_Driver_t State_Driver_t;
 typedef struct Speed_Driver_t Speed_Driver_t;
+typedef struct Current_D_Driver_t Current_D_Driver_t;
+typedef struct Current_Q_Driver_t Current_Q_Driver_t;
 
 //PARA PI的结构体
 struct PI_Driver_t
@@ -48,9 +50,21 @@ struct Speed_Driver_t
     void (*Speed_Init)(Speed_Driver_t* self);
 };
 
+//PARA Q轴电流环结构体
+struct Current_D_Driver_t
+{
+    PI_Driver_t pi;
+    foc_float_t now;
+    foc_float_t expert;
+    foc_float_t out;
+    foc_float_t(*ID_OUT)(Current_D_Driver_t* self,foc_float_t dt,foc_float_t ID_now);
+    void(*ID_Init)(Current_D_Driver_t* self);
+};
+
 void PI_Create(PI_Driver_t* self);
 void State_Create(State_Driver_t* self);
 void Speed_Create(Speed_Driver_t* self);
+void ID_Create(Current_D_Driver_t* self);
 
 #endif
 

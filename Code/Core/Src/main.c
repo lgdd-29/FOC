@@ -110,10 +110,9 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
   {
     //获取电流
     myMotor1->I_abc.a=HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
-    myMotor1->I_abc.c=HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
+    myMotor1->I_abc.b=HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
     myMotor1->I_abc_ture.a=(myMotor1->I_abc.a-myMotor1->I_abc_offset.a)*3.3*50/(4095*4.02);
-    myMotor1->I_abc_ture.c=(myMotor1->I_abc.c-myMotor1->I_abc_offset.c)*3.3*50/(4095*4.02);
-    myMotor1->I_abc_ture.b=-(myMotor1->I_abc_ture.a+myMotor1->I_abc_ture.c);
+    myMotor1->I_abc_ture.b=(myMotor1->I_abc.b-myMotor1->I_abc_offset.b)*3.3*50/(4095*4.02);
     myMotor1->Run(myMotor1,0.005f);
   
   }
@@ -214,7 +213,9 @@ int main(void)
   //定时器2中断使能
   HAL_TIM_Base_Start_IT(&htim2);
    //PARA 速度环参数
-  myMotor1->Speed(myMotor1,4,3,0.03);
+  myMotor1->Speed(myMotor1,2,3,0.03);
+  //PARA 电流环参数
+  myMotor1->id(myMotor1,0,0.5,0);
   //TODO while 
   while (1)
   {
@@ -223,11 +224,11 @@ int main(void)
     /* USER CODE BEGIN 3 */
   /*float angle_test;
   angle_test=myMotor1->myas5600.Angle_Spped;
-  Float_send(&angle_test,&huart1);*/
+  Float_send(&angle_test,&huart1);*/  
   float I[3];
-  I[0]=myMotor1->I_abc_ture.a;
-  I[1]=myMotor1->I_abc_ture.b;
-  I[2]=myMotor1->I_abc_ture.c;
+  I[0]=myMotor1->speed.expert;
+  I[1]=myMotor1->speed.now;
+  I[2]=myMotor1->Id.now;
   Float_send(I,&huart1);
   //  myMotor1->Run(myMotor1,0.01f);
   
@@ -570,7 +571,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 230400;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
