@@ -99,14 +99,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if(htim==&htim2)
   {
       //PARA 位置环参数
-    myMotor1->Site(myMotor1,PI,2.5f,0);
+    myMotor1->Site(myMotor1,0,1,0);
     myMotor1->site.State_OUT(&myMotor1->site,0.01,myMotor1->myas5600.Angle_now);
     //PARA 速度环参数
-    myMotor1->Speed(myMotor1,myMotor1->site.out,0.1,0.01);
+    myMotor1->Speed(myMotor1,4,0.1,0.01);
     myMotor1->speed.Speed_OUT(&myMotor1->speed,0.01,myMotor1->myas5600.Angle_Spped);
     //PARA 电流环参数
     myMotor1->id(myMotor1,0.2,0.5,0);
-    myMotor1->iq(myMotor1,myMotor1->speed.out,0.1,0.01f);
+    myMotor1->iq(myMotor1,1,0.5,0.01);
   }
 }
 
@@ -232,9 +232,9 @@ int main(void)
   angle_test=myMotor1->myas5600.Angle_Spped;
   Float_send(&angle_test,&huart1);*/  
   float I[3];
-  I[0]=myMotor1->I_abc_ture.a;
-  I[1]=myMotor1->site.now;
-  I[2]=myMotor1->site.expert;
+  I[0]=myMotor1->I_abc.a;
+  I[1]=myMotor1->I_abc.b;
+  I[2]=myMotor1->I_abc.c;
   Float_send(I,&huart1);
   //  myMotor1->Run(myMotor1,0.01f);
   
@@ -338,7 +338,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_9;
+  sConfig.Channel = ADC_CHANNEL_14;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -405,7 +405,7 @@ static void MX_ADC2_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_10;
+  sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
@@ -577,7 +577,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 230400;
+  huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -609,8 +609,8 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();

@@ -12,7 +12,8 @@ foc_float_t PI_OUT(PI_Driver_t* self,foc_float_t error,foc_float_t dt)
     // 计算比例项
     foc_float_t P_out = self->Kp * error;
 
-
+    // 计算积分项
+    self->integral += error * dt*self->Ki;
     
     // 积分限幅
     if (self->integral > self->integral_limit)
@@ -30,9 +31,7 @@ foc_float_t PI_OUT(PI_Driver_t* self,foc_float_t error,foc_float_t dt)
         output = self->output_limit;
     else if (output < -self->output_limit)
         output = -self->output_limit;
-    else
-        // 计算积分项
-         self->integral += error * dt*self->Ki;
+
     return output;
 }
 
@@ -120,7 +119,7 @@ foc_float_t IQ_OUT(Current_Q_Driver_t* self,foc_float_t dt,foc_float_t IQ_now)
     self->now=IQ_now;
     foc_float_t error=self->expert-self->now;
     _constrain(error, -6, 6);
-    self->out=self->pi.PI_OUT(&self->pi,error,dt);
+    self->out=self->pi.PI_OUT(&self->pi,-error,dt);
     return self->out;
 }
 

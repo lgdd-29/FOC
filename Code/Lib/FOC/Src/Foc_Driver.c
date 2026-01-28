@@ -33,10 +33,10 @@ void FOC_Run_Impl(FOC_Driver_t* self,foc_float_t dt)
     Park_Transform(&self->I_alpha_beta, &self->I_dq, Angle_now);
 
     // 2. 设置d轴电压为0，q轴电压为Uq
-    self->v_dq.x = self->Id.ID_OUT(&self->Id,dt,self->I_dq.x); // Vd
-    self->v_dq.y=self->Iq.IQ_OUT(&self->Iq,dt,self->I_dq.y);
+    self->v_dq.x = -self->Id.ID_OUT(&self->Id,dt,self->I_dq.x); // Vd
+    //self->v_dq.y=self->Iq.IQ_OUT(&self->Iq,dt,self->I_dq.y);
     //self->v_dq.y = self->speed.out;
-    //self->v_dq.y = self->site.out;
+    self->v_dq.y = self->site.out;
     //self->v_dq.y = self->site.State_OUT(&self->site,dt,self->myas5600.Angle_now);
     //self->v_dq.y = self->site.State_OUT(&self->site,dt);   // Vq
 
