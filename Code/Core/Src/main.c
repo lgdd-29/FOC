@@ -102,7 +102,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     myMotor1->Site(myMotor1,0,1,0);
     myMotor1->site.State_OUT(&myMotor1->site,0.01,myMotor1->myas5600.Angle_now);
     //PARA 速度环参数
-    myMotor1->Speed(myMotor1,4,0.1,0.01);
+    myMotor1->Speed(myMotor1,2,0.2,0.01);
     myMotor1->speed.Speed_OUT(&myMotor1->speed,0.01,myMotor1->myas5600.Angle_Spped);
     //PARA 电流环参数
     myMotor1->id(myMotor1,0.2,0.5,0);
@@ -121,6 +121,7 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
     myMotor1->I_abc.a=HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
     myMotor1->I_abc.b=HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
     HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_5);
+
     myMotor1->I_abc_ture.a=(myMotor1->I_abc.a-myMotor1->I_abc_offset.a)*3.3*50/(4095*4.02);
     myMotor1->I_abc_ture.b=(myMotor1->I_abc.b-myMotor1->I_abc_offset.b)*3.3*50/(4095*4.02);
     myMotor1->I_abc_ture.c=-(myMotor1->I_abc_ture.a+myMotor1->I_abc_ture.b);
@@ -189,7 +190,6 @@ int main(void)
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
-
 
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
 
@@ -501,7 +501,7 @@ static void MX_TIM1_Init(void)
   sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
   sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
   sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
-  sBreakDeadTimeConfig.DeadTime = 0x10;
+  sBreakDeadTimeConfig.DeadTime = 0xA0;
   sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
   sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
   sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
